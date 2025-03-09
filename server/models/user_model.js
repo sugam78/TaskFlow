@@ -28,6 +28,7 @@ const userSchema = mongoose.Schema({
             message: 'Please enter a valid password',
         }
     },
+    groups: [{ type: mongoose.Schema.Types.ObjectId, ref: "ChatGroup" }],
 });
 
 const User = mongoose.model('User', userSchema);
