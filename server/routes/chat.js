@@ -99,7 +99,7 @@ router.get("/api/groupMessages/:groupId", auth, async (req, res) => {
     try {
         const { groupId } = req.params;
         const { page = 1, limit = 20 } = req.query;
-        const userId = req.user.id; // Assuming req.user.id holds the logged-in user's ID
+        const userId = req.user; 
 
         const messages = await Message.find({ group: groupId })
             .sort({ timestamp: -1 })
