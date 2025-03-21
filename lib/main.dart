@@ -12,6 +12,18 @@ import 'package:taskflow/core/services/service_locator.dart';
 import 'package:taskflow/features/auth/domain/use_cases/login.dart';
 import 'package:taskflow/features/auth/domain/use_cases/signup.dart';
 import 'package:taskflow/features/auth/presentation/manager/auth_bloc.dart';
+import 'package:taskflow/features/chat/domain/use_cases/create_group_use_case.dart';
+import 'package:taskflow/features/chat/domain/use_cases/create_task_use_case.dart';
+import 'package:taskflow/features/chat/domain/use_cases/fetch_messages_use_case.dart';
+import 'package:taskflow/features/chat/domain/use_cases/get_chat_group_use_case.dart';
+import 'package:taskflow/features/chat/domain/use_cases/get_my_groups_use_case.dart';
+import 'package:taskflow/features/chat/domain/use_cases/send_message_use_case.dart';
+import 'package:taskflow/features/chat/domain/use_cases/update_task_use_case.dart';
+import 'package:taskflow/features/chat/presentation/manager/chat_messages_bloc/chat_messages_bloc.dart';
+import 'package:taskflow/features/chat/presentation/manager/chat_task_bloc/chat_task_bloc.dart';
+import 'package:taskflow/features/chat/presentation/manager/create_group_bloc/create_group_bloc.dart';
+import 'package:taskflow/features/chat/presentation/manager/group_details_bloc/group_details_bloc.dart';
+import 'package:taskflow/features/chat/presentation/manager/my_groups_bloc/my_groups_bloc.dart';
 import 'package:taskflow/firebase_options.dart';
 
 void main() async {
@@ -52,6 +64,16 @@ class MyApp extends StatelessWidget {
               authLocator<LoginUseCase>(),
               authLocator<SignupUseCase>(),
             )),
+        BlocProvider(
+            create: (context) => MyGroupsBloc(chatLocator<GetMyGroupsUseCase>())),
+        BlocProvider(
+            create: (context) => CreateGroupBloc(chatLocator<CreateGroupUseCase>())),
+        BlocProvider(
+            create: (context) => GroupDetailsBloc(chatLocator<GetChatGroupUseCase>())),
+        BlocProvider(
+            create: (context) => ChatMessagesBloc(messageLocator<SendMessageUseCase>(),messageLocator<FetchMessageUseCase>())),
+        BlocProvider(
+            create: (context) => ChatTaskBloc(taskLocator<CreateTaskUseCase>(),taskLocator<UpdateTaskUseCase>())),
         BlocProvider(
             create: (context) => ThemeCubit(settingsBox)),
       ],

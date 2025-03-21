@@ -1,7 +1,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:taskflow/core/common/widgets/app_bar.dart';
 import 'package:taskflow/core/resources/app_colors.dart';
 
 class BottomNavBar extends StatefulWidget {
@@ -25,10 +24,6 @@ class _BottomNavBarState extends State<BottomNavBar> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: widget.navigationShell,
-      appBar: PreferredSize(
-        preferredSize: Size(double.infinity, 50),
-        child: MyAppBar(),
-      ),
       bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
           iconSize: 28,

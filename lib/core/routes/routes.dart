@@ -5,9 +5,10 @@ import 'package:taskflow/core/common/widgets/bottom_nav_bar.dart';
 import 'package:taskflow/features/activity/presentation/pages/activity_home.dart';
 import 'package:taskflow/features/auth/presentation/pages/login_screen.dart';
 import 'package:taskflow/features/auth/presentation/pages/signup_screen.dart';
+import 'package:taskflow/features/chat/presentation/pages/chat_group_details.dart';
+import 'package:taskflow/features/my_tasks/presentation/pages/task_home.dart';
 import 'package:taskflow/features/splash/presentation/pages/splash_screen.dart';
 import 'package:taskflow/features/chat/presentation/pages/chat_home.dart';
-import 'package:taskflow/features/tasks/presentation/pages/task_home.dart';
 
 
 final rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -83,6 +84,14 @@ final route = GoRouter(
         path: '/signup',
         name: 'signup',
         builder: (context, state) => const SignupScreen(),
+      ),
+      GoRoute(
+        path: '/chatGroupDetails',
+        name: 'chatGroupDetails',
+        builder: (context, state) {
+          final groupId = state.extra as String;
+          return ChatGroupDetails(groupId: groupId);
+        },
       ),
 
     ]);

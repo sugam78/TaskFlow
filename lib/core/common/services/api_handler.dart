@@ -5,9 +5,10 @@ import 'package:http/http.dart' as http;
 
 Future<dynamic> apiHandler(
     String url,
+    http.Client client,
     String method, {
       Map<String, String>? headers,
-      Map<String, String>? body,
+      Map<String, dynamic>? body,
       bool authorization = false,
     }) async {
   method = method.toUpperCase();
@@ -17,34 +18,34 @@ Future<dynamic> apiHandler(
 
   Map<String, String> headers = {
     'Content-Type': 'application/json; charset=UTF-8',
-    'x-auth-token': token,
+    'Authorization': 'Bearer $token',
   };
 
   if (method.toUpperCase() == 'GET') {
-    response = await http.get(
+    response = await client.get(
       Uri.parse(url),
       headers: headers,
     );
   } else if (method.toUpperCase() == 'POST') {
-    response = await http.post(
+    response = await client.post(
       Uri.parse(url),
       headers: headers,
       body: jsonEncode(body),
     );
   } else if (method.toUpperCase() == 'PUT') {
-    response = await http.put(
+    response = await client.put(
       Uri.parse(url),
       headers: headers,
       body: jsonEncode(body),
     );
   } else if (method.toUpperCase() == 'PATCH') {
-    response = await http.patch(
+    response = await client.patch(
       Uri.parse(url),
       headers: headers,
       body: jsonEncode(body),
     );
   } else if (method.toUpperCase() == 'DELETE') {
-    response = await http.delete(Uri.parse(url), headers: headers, body: body);
+    response = await client.delete(Uri.parse(url), headers: headers, body: body);
   } else {
     throw Exception('Invalid method');
   }

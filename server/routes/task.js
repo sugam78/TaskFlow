@@ -40,6 +40,33 @@ router.post("/api/createTask", auth, async (req, res) => {
     res.status(201).json(task);
 });
 
+router.put("/api/updateTask/:taskId", auth, async (req, res) => {
+    try {
+        const { taskId } = req.params;
+        const { status } = req.body;
+
+        // Validate status
+        const validStatuses = ['pending', 'in-progress', 'completed'];
+        if (!validStatuses.includes(status)) {
+            return res.status(400).json({ message: "Invalid status" });
+        }
+
+        const updatedTask = await Task.findByIdAndUpdate(
+            taskId,
+            { status, updatedAt: Date.now() },
+            { new: true }
+        );
+
+        if (!updatedTask) {
+            return res.status(404).json({ message: "Task not found" });
+        }
+
+        res.status(200).json(updatedTask);
+    } catch (error) {
+        res.status(500).json({ message: "Server error", error });
+    }
+});
+
 // API to fetch tasks assigned to the authenticated user
 router.get("/api/myTasks", auth, async (req, res) => {
     const userId = req.user._id;

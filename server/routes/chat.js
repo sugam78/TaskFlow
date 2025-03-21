@@ -16,13 +16,16 @@ const getUserIdsByEmails = async (emails) => {
 // Create new group
 router.post("/api/createGroup",auth, async (req, res) => {
     const { name, memberEmails } = req.body;
-
+    const userId = req.user;
     // Convert emails to user IDs
     const memberIds = await getUserIdsByEmails(memberEmails);
-
+    if (!memberIds.includes(userId)) {
+                memberIds.push(userId);
+            }
     const group = new ChatGroup({
         name: name,
         members: memberIds,
+        admins: [userId]
     });
 
     await group.save();
@@ -32,7 +35,9 @@ router.post("/api/createGroup",auth, async (req, res) => {
 // Create a new message (text, task, or file)
 router.post("/api/sendMessage", auth, async (req, res) => {
     const { content, taskId, fileUrl, groupId, type } = req.body;
-    const sender = req.user;
+    const senderId = req.user;
+    const sender = await User.findById(senderId);
+    console.log(sender);
 
     if (!sender) {
         return res.status(400).json({ message: "Sender not found" });
@@ -46,9 +51,11 @@ router.post("/api/sendMessage", auth, async (req, res) => {
 
     let messageData = {
         sender: sender._id,
+        senderName: sender.name,
         group: group._id,
         type: type,
     };
+    console.log(messageData);
 
     if (type === 'text') {
         messageData.content = content;
@@ -57,7 +64,7 @@ router.post("/api/sendMessage", auth, async (req, res) => {
         if (!task) {
             return res.status(404).json({ message: "Task not found" });
         }
-        messageData.task = task._id; // Attach task to message
+        messageData.task = task;
     } else if (type === 'file') {
         messageData.file = fileUrl;
     }
@@ -67,12 +74,63 @@ router.post("/api/sendMessage", auth, async (req, res) => {
 
     // Add message to group's messages array
     group.messages.push(message._id);
+    group.updatedAt = Date.now();
     await group.save();
 
     res.status(200).json(message);
 });
 
+router.get("/api/getGroup/:groupId", auth, async (req, res) => {
+    try {
+        const { groupId } = req.params;
+        const group = await ChatGroup.findById(groupId)
+            .populate("members", "name email");
+        if (!group) {
+            return res.status(404).json({ message: "Group not found" });
+        }
 
+        res.status(200).json(group);
+    } catch (error) {
+        res.status(500).json({ message: "Server error", error });
+    }
+});
+
+router.get("/api/groupMessages/:groupId", auth, async (req, res) => {
+    try {
+        const { groupId } = req.params;
+        const { page = 1, limit = 20 } = req.query;
+        const userId = req.user.id; // Assuming req.user.id holds the logged-in user's ID
+
+        const messages = await Message.find({ group: groupId })
+            .sort({ timestamp: -1 })
+            .skip((page - 1) * limit)
+            .limit(parseInt(limit));
+
+        const modifiedMessages = messages.map(msg => ({
+            ...msg._doc,
+            isCurrentUser: msg.sender.toString() === userId
+        }));
+
+        res.status(200).json(modifiedMessages);
+    } catch (error) {
+        res.status(500).json({ message: "Server error", error });
+    }
+});
+
+
+
+router.get("/api/getMyGroups", auth, async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const groups = await ChatGroup.find({ members: userId })
+            .select("_id name updatedAt")
+            .sort({ updatedAt: -1 });
+
+        res.status(200).json(groups);
+    } catch (error) {
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+});
 
 
 module.exports = router;
