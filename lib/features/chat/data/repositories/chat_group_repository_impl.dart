@@ -1,4 +1,6 @@
-import 'package:taskflow/features/chat/data/data_sources/chat_group_remote_data_source.dart';
+
+import 'package:taskflow/features/chat/data/data_sources/remote/chat_group_remote_data_source.dart';
+
 import 'package:taskflow/features/chat/data/mappers/chat_group_mapper.dart';
 import 'package:taskflow/features/chat/domain/entities/chat_group.dart';
 import 'package:taskflow/features/chat/domain/entities/my_chat_groups.dart';

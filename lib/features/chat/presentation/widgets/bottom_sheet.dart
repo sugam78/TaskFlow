@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:taskflow/core/resources/app_colors.dart';
+import 'package:taskflow/core/resources/dimensions.dart';
 import 'package:taskflow/features/chat/presentation/manager/create_group_bloc/create_group_bloc.dart';
+import 'package:taskflow/features/chat/presentation/manager/my_groups_bloc/my_groups_bloc.dart';
 
 class CreateGroupBottomSheet extends StatefulWidget {
   const CreateGroupBottomSheet({super.key});
@@ -18,10 +21,10 @@ class _CreateGroupBottomSheetState extends State<CreateGroupBottomSheet> {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(
-        left: 16,
-        right: 16,
-        top: 16,
-        bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+        left: deviceWidth * 0.02,
+        right: deviceWidth * 0.02,
+        top: deviceWidth * 0.02,
+        bottom: MediaQuery.of(context).viewInsets.bottom + deviceWidth * 0.02,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -29,20 +32,20 @@ class _CreateGroupBottomSheetState extends State<CreateGroupBottomSheet> {
         children: [
           Center(
             child: Container(
-              width: 40,
-              height: 5,
+              width: deviceWidth * 0.08,
+              height: deviceHeight * 0.008,
               decoration: BoxDecoration(
                 color: Colors.grey[400],
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(deviceWidth * 0.02),
               ),
             ),
           ),
-          const SizedBox(height: 10),
-          const Text(
+          SizedBox(height: deviceHeight * 0.01),
+          Text(
             'Create Group',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: Theme.of(context).textTheme.titleMedium,
           ),
-          const SizedBox(height: 10),
+          SizedBox(height: deviceHeight * 0.01),
           BlocBuilder<CreateGroupBloc, CreateGroupState>(
             builder: (context, state) {
               String groupName = state is CreateGroupData ? state.groupName : '';
@@ -54,7 +57,7 @@ class _CreateGroupBottomSheetState extends State<CreateGroupBottomSheet> {
               );
             },
           ),
-          const SizedBox(height: 10),
+          SizedBox(height: deviceHeight * 0.01),
           TextField(
             controller: _emailController,
             decoration: InputDecoration(
@@ -70,24 +73,24 @@ class _CreateGroupBottomSheetState extends State<CreateGroupBottomSheet> {
               ),
             ),
           ),
-          const SizedBox(height: 10),
-          const Text(
+          SizedBox(height: deviceHeight * 0.01),
+          Text(
             'Added Emails:',
-            style: TextStyle(fontWeight: FontWeight.bold),
+            style: Theme.of(context).textTheme.titleSmall,
           ),
-          const SizedBox(height: 5),
+          SizedBox(height: deviceHeight * 0.005),
           BlocBuilder<CreateGroupBloc, CreateGroupState>(
             builder: (context, state) {
               if (state is CreateGroupData && state.emails.isNotEmpty) {
                 return SizedBox(
-                  height: 150,
+                  height: deviceHeight * 0.3,
                   child: ListView.builder(
                     itemCount: state.emails.length,
                     itemBuilder: (context, index) => ListTile(
                       leading: const Icon(Icons.email),
                       title: Text(state.emails[index]),
                       trailing: IconButton(
-                        icon: const Icon(Icons.remove_circle, color: Colors.red),
+                        icon: Icon(Icons.remove_circle, color: AppColors.error),
                         onPressed: () => context.read<CreateGroupBloc>().add(RemoveEmail(index)),
                       ),
                     ),
@@ -97,8 +100,13 @@ class _CreateGroupBottomSheetState extends State<CreateGroupBottomSheet> {
               return const SizedBox.shrink();
             },
           ),
-          const SizedBox(height: 10),
-          BlocBuilder<CreateGroupBloc, CreateGroupState>(
+          SizedBox(height: deviceHeight * 0.01),
+          BlocConsumer<CreateGroupBloc, CreateGroupState>(
+            listener: (context,state){
+              if(state is CreateGroupLoaded){
+                context.read<MyGroupsBloc>().add(GetMyGroups());
+              }
+            },
             builder: (context, state) {
               return ElevatedButton(
                 onPressed: () {

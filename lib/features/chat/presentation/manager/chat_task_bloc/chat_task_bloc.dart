@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
-import 'package:taskflow/features/chat/domain/use_cases/create_task_use_case.dart';
-import 'package:taskflow/features/chat/domain/use_cases/update_task_use_case.dart';
+import 'package:taskflow/features/chat/domain/use_cases/task/create_task_use_case.dart';
+import 'package:taskflow/features/chat/domain/use_cases/task/update_task_use_case.dart';
 
 part 'chat_task_event.dart';
 part 'chat_task_state.dart';

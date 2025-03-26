@@ -99,7 +99,7 @@ router.get("/api/groupMessages/:groupId", auth, async (req, res) => {
     try {
         const { groupId } = req.params;
         const { page = 1, limit = 20 } = req.query;
-        const userId = req.user; 
+        const userId = req.user;
 
         const messages = await Message.find({ group: groupId })
             .sort({ timestamp: -1 })
@@ -121,7 +121,7 @@ router.get("/api/groupMessages/:groupId", auth, async (req, res) => {
 
 router.get("/api/getMyGroups", auth, async (req, res) => {
     try {
-        const userId = req.user._id;
+        const userId = req.user;
         const groups = await ChatGroup.find({ members: userId })
             .select("_id name updatedAt")
             .sort({ updatedAt: -1 });

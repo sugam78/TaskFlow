@@ -11,7 +11,7 @@ const router = express.Router();
 router.post("/api/createTask", auth, async (req, res) => {
     const { title, description, assignedToEmail, groupId } = req.body;
 
-    const sender = req.user;
+    const senderId = req.user;
 
     const assignedTo = await User.findOne({ email: assignedToEmail });
     if (!assignedTo) {
@@ -32,7 +32,7 @@ router.post("/api/createTask", auth, async (req, res) => {
         title: title,
         description: description,
         assignedTo: assignedTo._id,
-        createdBy: sender._id,
+        createdBy: senderId,
     });
 
     await task.save();
@@ -69,7 +69,7 @@ router.put("/api/updateTask/:taskId", auth, async (req, res) => {
 
 // API to fetch tasks assigned to the authenticated user
 router.get("/api/myTasks", auth, async (req, res) => {
-    const userId = req.user._id;
+    const userId = req.user;
 
     // Fetch tasks where the user is assigned to them and the task is not completed
     const tasks = await Task.find({

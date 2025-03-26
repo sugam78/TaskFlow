@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
-import 'package:taskflow/features/chat/domain/use_cases/create_group_use_case.dart';
+import 'package:taskflow/features/chat/domain/use_cases/chat/create_group_use_case.dart';
 
 part 'create_group_event.dart';
 part 'create_group_state.dart';

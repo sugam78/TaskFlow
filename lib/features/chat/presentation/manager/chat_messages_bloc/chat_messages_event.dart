@@ -8,12 +8,13 @@ final class GetMessages extends ChatMessagesEvent{
 
   GetMessages(this.groupId);
 }
+class StartListeningToMessages extends ChatMessagesEvent {}
 
-final class SendMessages extends ChatMessagesEvent{
-  final String groupId,type;
-  final String? content ,fileUrl,taskId;
-
-  SendMessages(this.groupId, this.type, this.content, this.fileUrl, this.taskId);
+class StopListeningToMessages extends ChatMessagesEvent {}
+class NewMessageReceived extends ChatMessagesEvent {
+  final Message message;
+  NewMessageReceived(this.message);
 }
+
 
 final class ResetChatMessages extends ChatMessagesEvent{}

@@ -11,5 +11,7 @@ class ApiConstants{
   static final String fetchMessage = '$baseUrl/groupMessages';
   static final String createTask = '$baseUrl/createTask';
   static final String updateTask = '$baseUrl/updateTask';
+  static final String uploadImage = '$baseUrl/file/upload';
+  static final String webSocket = 'http://10.0.2.2:3000';
 
 }

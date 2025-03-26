@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:taskflow/core/resources/dimensions.dart';
 import 'package:taskflow/features/chat/presentation/manager/group_details_bloc/group_details_bloc.dart';
 import 'package:taskflow/features/chat/presentation/widgets/chat_messages_bottom.dart';
 import 'package:taskflow/features/chat/presentation/widgets/chat_messages_list.dart';
+import 'package:taskflow/features/chat/presentation/widgets/show_picked_image.dart';
 
 class ChatGroupDetails extends StatefulWidget {
   final String groupId;
@@ -59,8 +61,9 @@ class _ChatGroupDetailsState extends State<ChatGroupDetails> {
                 Column(
                   children: [
                     ChatMessagesList(groupId: widget.groupId),
-                    Expanded(child: Container()),
-                    ChatMessagesBottom(controller: _messageController),
+                    SizedBox(height: deviceHeight * 0.02,),
+                    ShowPickedImage(),
+                    ChatMessagesBottom(controller: _messageController,groupId: widget.groupId,),
                   ],
                 ),
               ],

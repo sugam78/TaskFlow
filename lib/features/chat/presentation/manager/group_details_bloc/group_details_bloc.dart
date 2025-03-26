@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:taskflow/features/chat/domain/entities/chat_group.dart';
-import 'package:taskflow/features/chat/domain/use_cases/get_chat_group_use_case.dart';
+import 'package:taskflow/features/chat/domain/use_cases/chat/get_chat_group_use_case.dart';
 
 part 'group_details_event.dart';
 part 'group_details_state.dart';

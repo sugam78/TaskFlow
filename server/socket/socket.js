@@ -1,82 +1,69 @@
-// socket.js
 const socketIo = require("socket.io");
 const Message = require("../models/message_model");
 const Task = require("../models/task_model");
-const Group = require("../models/chat_group_model");
+const User = require("../models/user_model");
+const ChatGroup = require("../models/chat_group_model");
+const authenticateSocket = require("../middlewares/socket");
+
+const connectedUsers = new Map(); // userId => socketId
 
 const setupSocket = (server) => {
-    const io = socketIo(server); // Setup socket server
+    const io = socketIo(server);
+
+    io.use(authenticateSocket);
 
     io.on("connection", (socket) => {
         console.log("New client connected");
 
-        // Join group chat room
-        socket.on("joinGroup", (groupId) => {
-            socket.join(groupId);
-            console.log(`Joined group ${groupId}`);
-        });
 
-        // Send message (text, task, or file)
+        const userId = socket.request.user._id;
+        connectedUsers.set(userId, socket.id);
+        console.log(connectedUsers);
+
         socket.on("sendMessage", async (messageData) => {
-            const { content, taskId, fileUrl, groupId, senderId, type } = messageData;
+            const { content, taskId, fileUrl, groupId, type } = messageData;
+            const senderId = socket.request.user._id;
+            const senderName = socket.request.user.name;
 
-            // Modify the existing messageData instead of redeclaring it
+            const group = await ChatGroup.findById(groupId);
+
+                if (!group) {
+                    return res.status(404).json({ message: "Group not found" });
+                }
+
             messageData.sender = senderId;
+            messageData.senderName = senderName;
             messageData.group = groupId;
             messageData.type = type;
 
-            if (type === "text") {
-                messageData.content = content;
-            } else if (type === "task") {
+            if (type === "task") {
                 const task = await Task.findById(taskId);
                 if (!task) {
                     return socket.emit("error", "Task not found");
                 }
-                messageData.task = task._id;
+                messageData.task = task;
             } else if (type === "file") {
                 messageData.file = fileUrl;
             }
 
-            // Create a new message
             const message = new Message(messageData);
             await message.save();
 
-            // Broadcast the message to the group
-            io.to(groupId).emit("newMessage", message);
-        });
+            group.messages.push(message._id);
+            group.updatedAt = Date.now();
+            await group.save();
 
-
-        // Add task to a group (same as sendMessage)
-        socket.on("addTask", async (taskData) => {
-            const { title, description, assignedTo, groupId, senderId } = taskData;
-
-            // Check if the assigned user is part of the group
-            const group = await Group.findById(groupId);
-            if (!group) {
-                return socket.emit("error", "Group not found");
+            for (let [userId, socketId] of connectedUsers) {
+                io.to(socketId).emit("newMessage", {
+                    ...message._doc,
+                    isCurrentUser: userId.toString() === senderId.toString()
+                });
             }
-
-            // Check if the assigned user is in the group members list
-            if (!group.members.includes(assignedTo)) {
-                return socket.emit("error", "Assigned user is not a member of the group");
-            }
-
-            // Create and save the task
-            const task = new Task({
-                title: title,
-                description: description,
-                assignedTo: assignedTo,
-                createdBy: senderId,
-            });
-
-            await task.save();
-
-            // Broadcast task to the group
-            io.to(groupId).emit("newTask", task);
         });
 
         socket.on("disconnect", () => {
             console.log("Client disconnected");
+            connectedUsers.delete(userId);
         });
     });
 };

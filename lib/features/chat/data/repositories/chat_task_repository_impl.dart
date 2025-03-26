@@ -1,4 +1,4 @@
-import 'package:taskflow/features/chat/data/data_sources/chat_task_remote_data_source.dart';
+import 'package:taskflow/features/chat/data/data_sources/remote/chat_task_remote_data_source.dart' show ChatTaskRemoteDataSource;
 import 'package:taskflow/features/chat/domain/repositories/chat_task_repo.dart';
 
 class ChatTaskRepositoryImpl extends ChatTaskRepository{

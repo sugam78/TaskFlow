@@ -1,5 +1,9 @@
+import 'dart:convert';
+
+import 'package:flutter/foundation.dart';
 import 'package:taskflow/core/common/services/api_handler.dart';
 import 'package:taskflow/core/constants/api_constants.dart';
+import 'package:taskflow/core/utils/json_parser.dart';
 import 'package:taskflow/features/chat/data/models/chat_group_model.dart';
 import 'package:taskflow/features/chat/data/models/my_chat_groups_model.dart';
 import 'package:http/http.dart' as http;
@@ -21,7 +25,8 @@ class ChatGroupRemoteDataSourceImpl extends ChatGroupRemoteDataSource{
       if(response.toString()=='[]'){
         throw 'No groups associated with you';
       }
-      final groups = MyChatGroupsModel.fromJson(response);
+      final groups = await compute(parseGroups, jsonEncode(response));
+
       return groups;
     }
     catch(e){
