@@ -144,6 +144,10 @@ class _ChatMessagesBottomState extends State<ChatMessagesBottom> {
                               widget.groupId,
                             ),
                           );
+
+                          _titleController.clear();
+                          _descriptionController.clear();
+                          _assignedToEmailController.clear();
                         }
                       },
                       child: const Text('Send task'),

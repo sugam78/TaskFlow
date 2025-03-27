@@ -17,6 +17,10 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:taskflow/features/chat/data/data_sources/remote/chat_group_remote_data_source.dart';
 import 'package:taskflow/features/chat/data/data_sources/remote/chat_image_picker_data_source.dart';
 import 'package:taskflow/features/chat/data/data_sources/remote/chat_messages_remote_data_source.dart';
+import 'package:taskflow/features/my_tasks/data/data_sources/my_tasks_remote_data_source.dart';
+import 'package:taskflow/features/my_tasks/data/repositories/my_tasks_repository_impl.dart';
+import 'package:taskflow/features/my_tasks/domain/repositories/my_tasks_repo.dart';
+import 'package:taskflow/features/my_tasks/domain/use_cases/fetch_my_tasks_use_case.dart';
 import 'package:taskflow/shared/data/data_sources/chat_task_remote_data_source.dart';
 import 'package:taskflow/features/chat/data/data_sources/remote/chat_upload_image_data_source.dart';
 import 'package:taskflow/features/chat/data/data_sources/web_socket/receive_messages_web_socket_data_source.dart';
@@ -134,6 +138,9 @@ void setupServiceLocator(){
   taskLocator.registerLazySingleton(()=>CreateTaskUseCase(taskLocator<ChatTaskRepository>()));
   taskLocator.registerLazySingleton(()=>UpdateTaskUseCase(taskLocator<ChatTaskRepository>()));
 
+  taskLocator.registerLazySingleton<MyTasksRemoteDataSource>(()=>MyTasksRemoteDataSourceImpl(packagesLocator<http.Client>()));
+  taskLocator.registerLazySingleton<MyTasksRepository>(()=>MyTasksRepositoryImpl(taskLocator<MyTasksRemoteDataSource>()));
+  taskLocator.registerLazySingleton(()=>FetchMyTasksUseCase(taskLocator<MyTasksRepository>()));
 
 }
 

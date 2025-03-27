@@ -15,6 +15,9 @@ router.post("/api/createTask", auth, async (req, res) => {
 
     const assignedTo = await User.findOne({ email: assignedToEmail });
     const sender = await User.findById(senderId);
+    if(sender == assignedTo._id){
+        return res.status(400).json({ message: "Task cant be assigned to yourself" });
+    }
     if (!assignedTo) {
         return res.status(400).json({ message: "Assigned user not found" });
     }
@@ -73,7 +76,7 @@ router.get("/api/myTasks", auth, async (req, res) => {
     const assignedUser = await User.findById(userId);
     // Fetch tasks where the user is assigned to them and the task is not completed
     const tasks = await Task.find({
-        assignedTo: userId,
+        assignedTo: assignedUser.email,
         completed: { $ne: true }
     })
     .sort({ createdAt: -1 })

@@ -42,19 +42,19 @@ class _ChatGroupDetailsState extends State<ChatGroupDetails> {
           return Scaffold(
             appBar: AppBar(
               title: Text(state.chatGroup.name),
-              actions: [
-                PopupMenuButton(
-                  icon: Icon(Icons.menu),
-                  itemBuilder: (context) {
-                    return [
-                      PopupMenuItem(
-                        onTap: () {},
-                        child: Text('See Members'),
-                      )
-                    ];
-                  },
-                )
-              ],
+              // actions: [
+              //   PopupMenuButton(
+              //     icon: Icon(Icons.menu),
+              //     itemBuilder: (context) {
+              //       return [
+              //         PopupMenuItem(
+              //           onTap: () {},
+              //           child: Text('See Members'),
+              //         )
+              //       ];
+              //     },
+              //   )
+              // ],
             ),
             body: Stack(
               children: [

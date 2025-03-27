@@ -27,6 +27,8 @@ import 'package:taskflow/features/chat/presentation/manager/create_group_bloc/cr
 import 'package:taskflow/features/chat/presentation/manager/group_details_bloc/group_details_bloc.dart';
 import 'package:taskflow/features/chat/presentation/manager/my_groups_bloc/my_groups_bloc.dart';
 import 'package:taskflow/features/chat/presentation/manager/send_messages_bloc/send_message_bloc.dart';
+import 'package:taskflow/features/my_tasks/domain/use_cases/fetch_my_tasks_use_case.dart';
+import 'package:taskflow/features/my_tasks/presentation/manager/my_tasks_bloc/my_tasks_bloc.dart';
 import 'package:taskflow/firebase_options.dart';
 import 'package:taskflow/shared/domain/use_cases/create_task_use_case.dart';
 import 'package:taskflow/shared/domain/use_cases/update_task_use_case.dart';
@@ -86,6 +88,8 @@ class MyApp extends StatelessWidget {
             create: (context) => ChatUploadImageBloc(imageLocator<ChatUploadImageUseCase>())),
         BlocProvider(
             create: (context) => ChatPickImageBloc(imageLocator<ChatImagePickerUseCase>())),
+        BlocProvider(
+            create: (context) => MyTasksBloc(taskLocator<FetchMyTasksUseCase>())),
         BlocProvider(
             create: (context) => ThemeCubit(settingsBox)),
       ],
