@@ -4,6 +4,7 @@ import 'package:taskflow/core/resources/app_colors.dart';
 import 'package:taskflow/core/resources/dimensions.dart';
 import 'package:taskflow/features/chat/domain/entities/message.dart';
 import 'package:taskflow/features/chat/presentation/manager/chat_messages_bloc/chat_messages_bloc.dart';
+import 'package:taskflow/shared/presentation/widgets/task_view.dart';
 
 class ChatMessagesList extends StatefulWidget {
   final String groupId;
@@ -148,7 +149,7 @@ class ChatMessageBubble extends StatelessWidget {
         )
             : message.fileUrl != null
             ? SizedBox(height: deviceHeight * 0.2, child: Image.network(message.fileUrl!))
-            : Text('Task'),
+            : TaskViewWidget(task: message.task!),
       ),
     );
   }

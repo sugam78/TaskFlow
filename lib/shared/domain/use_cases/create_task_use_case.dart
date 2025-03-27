@@ -1,4 +1,4 @@
-import 'package:taskflow/features/chat/domain/repositories/chat_task_repo.dart';
+import 'package:taskflow/shared/domain/repositories/chat_task_repo.dart';
 
 class CreateTaskUseCase{
   final ChatTaskRepository chatTaskRepository;

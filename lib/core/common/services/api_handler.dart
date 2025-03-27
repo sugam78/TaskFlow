@@ -72,7 +72,7 @@ Future<dynamic> apiHandler(
   if (response.statusCode == 200 || response.statusCode == 201) {
     return jsonResponse;
   } else {
-    final errorMessage = jsonResponse["error"] ?? "An error occurred";
+    final errorMessage = jsonResponse["message"] ?? "An error occurred";
     throw Exception(errorMessage);
   }
 }

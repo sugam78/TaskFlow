@@ -20,17 +20,17 @@ import 'package:taskflow/features/chat/domain/use_cases/chat/listen_to_message_u
 import 'package:taskflow/features/chat/domain/use_cases/chat/send_message_use_case.dart';
 import 'package:taskflow/features/chat/domain/use_cases/image/chat_image_picker_use_case.dart';
 import 'package:taskflow/features/chat/domain/use_cases/image/chat_upload_image_use_case.dart';
-import 'package:taskflow/features/chat/domain/use_cases/task/create_task_use_case.dart';
-import 'package:taskflow/features/chat/domain/use_cases/task/update_task_use_case.dart';
 import 'package:taskflow/features/chat/presentation/manager/chat_messages_bloc/chat_messages_bloc.dart';
 import 'package:taskflow/features/chat/presentation/manager/chat_pick_image_bloc/chat_pick_image_bloc.dart';
-import 'package:taskflow/features/chat/presentation/manager/chat_task_bloc/chat_task_bloc.dart';
 import 'package:taskflow/features/chat/presentation/manager/chat_upload_image_bloc/chat_upload_image_bloc.dart';
 import 'package:taskflow/features/chat/presentation/manager/create_group_bloc/create_group_bloc.dart';
 import 'package:taskflow/features/chat/presentation/manager/group_details_bloc/group_details_bloc.dart';
 import 'package:taskflow/features/chat/presentation/manager/my_groups_bloc/my_groups_bloc.dart';
 import 'package:taskflow/features/chat/presentation/manager/send_messages_bloc/send_message_bloc.dart';
 import 'package:taskflow/firebase_options.dart';
+import 'package:taskflow/shared/domain/use_cases/create_task_use_case.dart';
+import 'package:taskflow/shared/domain/use_cases/update_task_use_case.dart';
+import 'package:taskflow/shared/presentation/manager/chat_task_bloc/chat_task_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

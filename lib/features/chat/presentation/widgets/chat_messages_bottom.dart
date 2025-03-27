@@ -6,9 +6,9 @@ import 'package:taskflow/core/common/widgets/custom_text_field.dart';
 import 'package:taskflow/core/resources/app_colors.dart';
 import 'package:taskflow/core/resources/dimensions.dart';
 import 'package:taskflow/features/chat/presentation/manager/chat_pick_image_bloc/chat_pick_image_bloc.dart';
-import 'package:taskflow/features/chat/presentation/manager/chat_task_bloc/chat_task_bloc.dart';
 import 'package:taskflow/features/chat/presentation/manager/chat_upload_image_bloc/chat_upload_image_bloc.dart';
 import 'package:taskflow/features/chat/presentation/manager/send_messages_bloc/send_message_bloc.dart';
+import 'package:taskflow/shared/presentation/manager/chat_task_bloc/chat_task_bloc.dart';
 
 class ChatMessagesBottom extends StatefulWidget {
   final TextEditingController controller;

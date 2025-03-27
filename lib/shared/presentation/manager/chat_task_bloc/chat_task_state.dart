@@ -10,7 +10,12 @@ final class ChatTaskCreated extends ChatTaskState {
 
   ChatTaskCreated(this.taskId);
 }
-final class ChatTaskUpdated extends ChatTaskState {}
+final class ChatTaskUpdated extends ChatTaskState {
+  final String status;
+  final String taskId;
+
+  ChatTaskUpdated(this.status, this.taskId);
+}
 final class ChatTaskError extends ChatTaskState {
   final String message;
 

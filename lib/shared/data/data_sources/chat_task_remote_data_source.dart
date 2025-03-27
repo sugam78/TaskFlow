@@ -1,10 +1,11 @@
 import 'package:taskflow/core/common/services/api_handler.dart';
 import 'package:http/http.dart' as http;
 import 'package:taskflow/core/constants/api_constants.dart';
+import 'package:taskflow/shared/data/models/task_model.dart';
 
 abstract class ChatTaskRemoteDataSource{
   Future<String> createTask(String title, String description, String assignedToEmail, String groupId);
-  Future<void> updateTask(String taskId, String status);
+  Future<List<String>> updateTask(String taskId, String status);
 }
 
 class ChatTaskRemoteDataSourceImpl extends ChatTaskRemoteDataSource{
@@ -28,11 +29,13 @@ class ChatTaskRemoteDataSourceImpl extends ChatTaskRemoteDataSource{
   }
 
   @override
-  Future<void> updateTask(String taskId, String status) async{
+  Future<List<String>> updateTask(String taskId, String status) async{
     try{
-     await apiHandler('${ApiConstants.updateTask}/$taskId', client, 'PUT',body: {
+      final response = await apiHandler('${ApiConstants.updateTask}/$taskId', client, 'PUT',body: {
         'status': status,
       });
+      final task = TaskModel.fromJson(response);
+      return [task.status,task.id];
     }
     catch(e){
       throw e.toString();

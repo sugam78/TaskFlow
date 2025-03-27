@@ -1,5 +1,6 @@
-import 'package:taskflow/features/chat/data/data_sources/remote/chat_task_remote_data_source.dart' show ChatTaskRemoteDataSource;
-import 'package:taskflow/features/chat/domain/repositories/chat_task_repo.dart';
+
+import 'package:taskflow/shared/data/data_sources/chat_task_remote_data_source.dart';
+import 'package:taskflow/shared/domain/repositories/chat_task_repo.dart';
 
 class ChatTaskRepositoryImpl extends ChatTaskRepository{
   final ChatTaskRemoteDataSource chatTaskRemoteDataSource;
@@ -11,7 +12,7 @@ class ChatTaskRepositoryImpl extends ChatTaskRepository{
   }
 
   @override
-  Future<void> updateTask(String taskId, String status) {
+  Future<List<String>> updateTask(String taskId, String status) {
     return chatTaskRemoteDataSource.updateTask(taskId,status);
   }
 

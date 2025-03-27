@@ -5,7 +5,7 @@ const User = require("../models/user_model");
 const ChatGroup = require("../models/chat_group_model");
 const authenticateSocket = require("../middlewares/socket");
 
-const connectedUsers = new Map(); // userId => socketId
+const connectedUsers = new Map();
 
 const setupSocket = (server) => {
     const io = socketIo(server);
@@ -18,7 +18,6 @@ const setupSocket = (server) => {
 
         const userId = socket.request.user._id;
         connectedUsers.set(userId, socket.id);
-        console.log(connectedUsers);
 
         socket.on("sendMessage", async (messageData) => {
             const { content, taskId, fileUrl, groupId, type } = messageData;

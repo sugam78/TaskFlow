@@ -14,6 +14,7 @@ router.post("/api/createTask", auth, async (req, res) => {
     const senderId = req.user;
 
     const assignedTo = await User.findOne({ email: assignedToEmail });
+    const sender = await User.findById(senderId);
     if (!assignedTo) {
         return res.status(400).json({ message: "Assigned user not found" });
     }
@@ -22,8 +23,8 @@ router.post("/api/createTask", auth, async (req, res) => {
     if (!group) {
         return res.status(404).json({ message: "Group not found" });
     }
-
-    if (!group.members.includes(assignedTo._id)) {
+    console.log(group.members);
+    if (!group.members.includes(assignedTo.id)) {
         return res.status(400).json({ message: "Assigned user is not a member of the group" });
     }
 
@@ -31,8 +32,8 @@ router.post("/api/createTask", auth, async (req, res) => {
     const task = new Task({
         title: title,
         description: description,
-        assignedTo: assignedTo._id,
-        createdBy: senderId,
+        assignedTo: assignedTo.email,
+        createdBy: sender.email,
     });
 
     await task.save();
@@ -56,7 +57,6 @@ router.put("/api/updateTask/:taskId", auth, async (req, res) => {
             { status, updatedAt: Date.now() },
             { new: true }
         );
-
         if (!updatedTask) {
             return res.status(404).json({ message: "Task not found" });
         }
@@ -70,13 +70,13 @@ router.put("/api/updateTask/:taskId", auth, async (req, res) => {
 // API to fetch tasks assigned to the authenticated user
 router.get("/api/myTasks", auth, async (req, res) => {
     const userId = req.user;
-
+    const assignedUser = await User.findById(userId);
     // Fetch tasks where the user is assigned to them and the task is not completed
     const tasks = await Task.find({
         assignedTo: userId,
-        completed: { $ne: true } // Exclude tasks that are completed
+        completed: { $ne: true }
     })
-    .sort({ createdAt: -1 }) // Sort from newest to oldest
+    .sort({ createdAt: -1 })
     .exec();
 
     if (tasks.length === 0) {
