@@ -2,11 +2,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:taskflow/core/common/widgets/bottom_nav_bar.dart';
-import 'package:taskflow/features/activity/presentation/pages/activity_home.dart';
+import 'package:taskflow/features/profile/presentation/pages/my_profile.dart';
 import 'package:taskflow/features/auth/presentation/pages/login_screen.dart';
 import 'package:taskflow/features/auth/presentation/pages/signup_screen.dart';
 import 'package:taskflow/features/chat/presentation/pages/chat_group_details.dart';
 import 'package:taskflow/features/my_tasks/presentation/pages/task_home.dart';
+import 'package:taskflow/features/security/presentation/pages/change_password.dart';
 import 'package:taskflow/features/splash/presentation/pages/splash_screen.dart';
 import 'package:taskflow/features/chat/presentation/pages/chat_home.dart';
 
@@ -58,11 +59,11 @@ final route = GoRouter(
             navigatorKey: rootNavigatorProfileKey,
             routes: [
               GoRoute(
-                path: '/activityHome',
-                name: 'activityHome',
+                path: '/myProfile',
+                name: 'myProfile',
                 pageBuilder: (context, state) => customAnimatedSwitcher(
                   key: state.pageKey,
-                  child: const ActivityHome(),
+                  child: const MyProfile(),
                 ),
               ),
             ],
@@ -84,6 +85,11 @@ final route = GoRouter(
         path: '/signup',
         name: 'signup',
         builder: (context, state) => const SignupScreen(),
+      ),
+      GoRoute(
+        path: '/changePassword',
+        name: 'changePassword',
+        builder: (context, state) => const ChangePassword(),
       ),
       GoRoute(
         path: '/chatGroupDetails',

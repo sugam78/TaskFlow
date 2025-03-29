@@ -49,7 +49,7 @@ class ChatMessagesBloc extends Bloc<ChatMessagesEvent, ChatMessagesState> {
           emit(ChatMessagesFetched(Messages(messages: currentMessages)));
         } else {
           _currentPage++;
-          emit(ChatMessagesFetched(Messages(messages: [...newMessages.messages, ...currentMessages])));
+          emit(ChatMessagesFetched(Messages(messages: [ ...currentMessages,...newMessages.messages])));
         }
       } catch (e) {
         emit(ChatMessagesError(e.toString()));
@@ -67,9 +67,12 @@ class ChatMessagesBloc extends Bloc<ChatMessagesEvent, ChatMessagesState> {
     }
   }
 
-  void _resetMessages(ResetChatMessages event, Emitter<ChatMessagesState> emit) async {
+  void _resetMessages(ResetChatMessages event, Emitter<ChatMessagesState> emit) {
+    _currentPage = 1;
+    _messageSubscription?.cancel();
     emit(ChatMessagesInitial());
   }
+
 
   void _startListeningToMessages(StartListeningToMessages event, Emitter<ChatMessagesState> emit) {
     _messageSubscription?.cancel();

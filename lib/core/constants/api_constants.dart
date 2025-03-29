@@ -1,6 +1,7 @@
 class ApiConstants{
 
   static const baseUrl = 'http://10.0.2.2:3000/api';
+  static final String webSocket = 'http://10.0.2.2:3000';
 
   static final String signUp = '$baseUrl/signup';
   static final String login = '$baseUrl/login';
@@ -13,6 +14,7 @@ class ApiConstants{
   static final String updateTask = '$baseUrl/updateTask';
   static final String myTasks = '$baseUrl/myTasks';
   static final String uploadImage = '$baseUrl/file/upload';
-  static final String webSocket = 'http://10.0.2.2:3000';
+  static final String myProfile = '$baseUrl/myProfile';
+  static final String changePassword = '$baseUrl/changePassword';
 
 }

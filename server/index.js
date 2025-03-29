@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const authRouter = require("./routes/auth.js");
 const chatRouter = require("./routes/chat.js");
 const taskRouter = require("./routes/task.js");
+const profileRouter = require("./routes/profile.js");
 const fileUploadRoutes = require("./routes/file_upload.js");
 const http = require("http");
 const socketHandler = require("./socket/socket.js");
@@ -18,6 +19,7 @@ app.use(express.json());
 app.use(authRouter);
 app.use(chatRouter);
 app.use(taskRouter);
+app.use(profileRouter);
 app.use(fileUploadRoutes);
 
 // WebSocket setup

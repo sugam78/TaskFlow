@@ -59,6 +59,7 @@ class _ChatMessagesBottomState extends State<ChatMessagesBottom> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                SizedBox(height: deviceHeight * 0.01,),
                 CustomTextField(
                   labelText: 'Title',
                   controller: _titleController,
@@ -69,6 +70,7 @@ class _ChatMessagesBottomState extends State<ChatMessagesBottom> {
                     return null;
                   },
                 ),
+                SizedBox(height: deviceHeight * 0.01,),
                 CustomTextField(
                   labelText: 'Description',
                   controller: _descriptionController,
@@ -79,6 +81,7 @@ class _ChatMessagesBottomState extends State<ChatMessagesBottom> {
                     return null;
                   },
                 ),
+                SizedBox(height: deviceHeight * 0.01,),
                 CustomTextField(
                   labelText: 'Assigned To (Email)',
                   controller: _assignedToEmailController,

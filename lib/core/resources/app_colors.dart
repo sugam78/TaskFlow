@@ -16,6 +16,7 @@ class AppColors {
   static const Color lightPrimaryText = Color(0xFF212121);
   static const Color lightSecondaryText = Color(0xFF757575);
   static const Color lightInputFill = Colors.white;
+  static const Color messageLight = Color(0xFFF1F1F1);
 
   // Dark Mode Colors
   static const Color darkBackground = Color(0xFF121212);
@@ -23,6 +24,7 @@ class AppColors {
   static const Color darkPrimaryText = Color(0xFFFFFFFF);
   static const Color darkSecondaryText = Color(0xFFB0BEC5);
   static const Color darkInputFill = Color(0xFF1E1E1E);
+  static const Color messageDark = Color(0xFF2A2A2A);
 
   // Error Colors
   static const Color error = Color(0xFFD32F2F);

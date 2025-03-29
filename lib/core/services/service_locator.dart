@@ -21,6 +21,14 @@ import 'package:taskflow/features/my_tasks/data/data_sources/my_tasks_remote_dat
 import 'package:taskflow/features/my_tasks/data/repositories/my_tasks_repository_impl.dart';
 import 'package:taskflow/features/my_tasks/domain/repositories/my_tasks_repo.dart';
 import 'package:taskflow/features/my_tasks/domain/use_cases/fetch_my_tasks_use_case.dart';
+import 'package:taskflow/features/profile/data/data_sources/my_profile_remote_data_source.dart';
+import 'package:taskflow/features/profile/data/repositories/my_profile_repository_impl.dart';
+import 'package:taskflow/features/profile/domain/repositories/my_profile_repo.dart';
+import 'package:taskflow/features/profile/domain/use_cases/get_my_profile_use_case.dart';
+import 'package:taskflow/features/security/data/data_sources/change_password_remote_data_source.dart';
+import 'package:taskflow/features/security/data/repositories/change_password_repository_impl.dart';
+import 'package:taskflow/features/security/domain/repositories/change_password_repo.dart';
+import 'package:taskflow/features/security/domain/use_cases/change_password_use_case.dart';
 import 'package:taskflow/shared/data/data_sources/chat_task_remote_data_source.dart';
 import 'package:taskflow/features/chat/data/data_sources/remote/chat_upload_image_data_source.dart';
 import 'package:taskflow/features/chat/data/data_sources/web_socket/receive_messages_web_socket_data_source.dart';
@@ -55,6 +63,7 @@ final sharedLocator = GetIt.instance;
 final packagesLocator = GetIt.instance;
 final chatLocator = GetIt.instance;
 final taskLocator = GetIt.instance;
+final profileLocator = GetIt.instance;
 final imageLocator = GetIt.instance;
 final messageLocator = GetIt.instance;
 final webSocketLocator = GetIt.instance;
@@ -74,11 +83,11 @@ void setupServiceLocator(){
         .build());
   });
 
+  sharedLocator.registerLazySingleton<NotificationServices>(
+          () => NotificationServices());
   //Auth
   authLocator.registerLazySingleton<AuthRemoteDataSource>(
           () => AuthRemoteDataSourceImpl(packagesLocator<http.Client>()));
-  sharedLocator.registerLazySingleton<NotificationServices>(
-          () => NotificationServices());
 
   authLocator.registerLazySingleton<AuthRepository>(
           () => AuthRepositoryImpl(authLocator<AuthRemoteDataSource>()));
@@ -86,6 +95,13 @@ void setupServiceLocator(){
   authLocator.registerLazySingleton(() => LoginUseCase(authLocator<AuthRepository>()));
   authLocator.registerLazySingleton(() => SignupUseCase(authLocator<AuthRepository>(),sharedLocator<NotificationServices>()));
 
+  authLocator.registerLazySingleton<ChangePasswordRemoteDataSource>(
+          () => ChangePasswordRemoteDataSourceImpl(packagesLocator<http.Client>()));
+
+  authLocator.registerLazySingleton<ChangePasswordRepository>(
+          () => ChangePasswordRepositoryImpl(authLocator<ChangePasswordRemoteDataSource>()));
+
+  authLocator.registerLazySingleton(() => ChangePasswordUseCase(authLocator<ChangePasswordRepository>()));
   //web sockets
   webSocketLocator.registerLazySingleton<WebSocketService>(
         () => WebSocketService(webSocketLocator<IO.Socket>()),
@@ -141,6 +157,12 @@ void setupServiceLocator(){
   taskLocator.registerLazySingleton<MyTasksRemoteDataSource>(()=>MyTasksRemoteDataSourceImpl(packagesLocator<http.Client>()));
   taskLocator.registerLazySingleton<MyTasksRepository>(()=>MyTasksRepositoryImpl(taskLocator<MyTasksRemoteDataSource>()));
   taskLocator.registerLazySingleton(()=>FetchMyTasksUseCase(taskLocator<MyTasksRepository>()));
+
+  //profile
+  profileLocator.registerLazySingleton<MyProfileRemoteDataSource>(()=>MyProfileRemoteDataSourceImpl(packagesLocator<http.Client>()));
+  profileLocator.registerLazySingleton<MyProfileRepository>(()=>MyProfileRepositoryImpl(profileLocator<MyProfileRemoteDataSource>()));
+  profileLocator.registerLazySingleton(()=>GetMyProfileUseCase(profileLocator<MyProfileRepository>()));
+
 
 }
 

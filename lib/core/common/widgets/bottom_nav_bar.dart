@@ -50,9 +50,9 @@ class _BottomNavBarState extends State<BottomNavBar> {
                       : Theme.of(context).textTheme.bodyMedium!.color!,
                 )),
             BottomNavigationBarItem(
-                label: 'Activity',
+                label: 'Profile',
                 icon: Icon(
-                  Icons.local_activity_outlined,
+                  Icons.person,
                   color: widget.navigationShell.currentIndex == 2
                       ? AppColors.primary
                       : Theme.of(context).textTheme.bodyMedium!.color!,

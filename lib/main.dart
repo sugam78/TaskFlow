@@ -29,6 +29,10 @@ import 'package:taskflow/features/chat/presentation/manager/my_groups_bloc/my_gr
 import 'package:taskflow/features/chat/presentation/manager/send_messages_bloc/send_message_bloc.dart';
 import 'package:taskflow/features/my_tasks/domain/use_cases/fetch_my_tasks_use_case.dart';
 import 'package:taskflow/features/my_tasks/presentation/manager/my_tasks_bloc/my_tasks_bloc.dart';
+import 'package:taskflow/features/profile/domain/use_cases/get_my_profile_use_case.dart';
+import 'package:taskflow/features/profile/presentation/manager/my_profile_bloc/my_profile_bloc.dart';
+import 'package:taskflow/features/security/domain/use_cases/change_password_use_case.dart';
+import 'package:taskflow/features/security/presentation/manager/change_password_bloc/change_password_bloc.dart';
 import 'package:taskflow/firebase_options.dart';
 import 'package:taskflow/shared/domain/use_cases/create_task_use_case.dart';
 import 'package:taskflow/shared/domain/use_cases/update_task_use_case.dart';
@@ -90,6 +94,10 @@ class MyApp extends StatelessWidget {
             create: (context) => ChatPickImageBloc(imageLocator<ChatImagePickerUseCase>())),
         BlocProvider(
             create: (context) => MyTasksBloc(taskLocator<FetchMyTasksUseCase>())),
+        BlocProvider(
+            create: (context) => MyProfileBloc(profileLocator<GetMyProfileUseCase>())),
+        BlocProvider(
+            create: (context) => ChangePasswordBloc(authLocator<ChangePasswordUseCase>())),
         BlocProvider(
             create: (context) => ThemeCubit(settingsBox)),
       ],

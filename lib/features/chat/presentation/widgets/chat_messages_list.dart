@@ -23,39 +23,55 @@ class _ChatMessagesListState extends State<ChatMessagesList> {
   @override
   void initState() {
     super.initState();
-    super.initState();
+
     _chatMessagesBloc = context.read<ChatMessagesBloc>();
-
-    _chatMessagesBloc.add(ResetChatMessages());
     _scrollController.addListener(_onScroll);
-    _chatMessagesBloc.add(GetMessages(widget.groupId));
-    _chatMessagesBloc.add(StopListeningToMessages());
 
-    // Start listening to new messages
-    _chatMessagesBloc.add(StartListeningToMessages());
+    _initializeChat();
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (mounted) {
-      context.read<ChatMessagesBloc>().add(ResetChatMessages());
-    }
+  void _initializeChat() {
+    _chatMessagesBloc.add(StopListeningToMessages());  // Stop previous listeners
+    _chatMessagesBloc.add(ResetChatMessages());        // Clear previous messages
+
+    Future.delayed(Duration(milliseconds: 200), () {
+      if (mounted) {
+        _chatMessagesBloc.add(GetMessages(widget.groupId));
+        _chatMessagesBloc.add(StartListeningToMessages());
+      }
+    });
   }
+
+
 
   void _onScroll() {
     if (_scrollController.position.pixels <= _scrollController.position.minScrollExtent + 100) {
       if (!isFetching) {
         isFetching = true;
+
         context.read<ChatMessagesBloc>().add(GetMessages(widget.groupId));
+
+        // Set delay to prevent frequent calls
+        Future.delayed(Duration(seconds: 1), () {
+          isFetching = false;
+        });
       }
     }
   }
+
+
+
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
       child: BlocBuilder<ChatMessagesBloc, ChatMessagesState>(
+        buildWhen: (previous, current) {
+          if (current is ChatMessagesFetching && previous is ChatMessagesFetched) {
+            return false;
+          }
+          return true;
+        },
         builder: (context, state) {
           if (state is ChatMessagesFetching) {
             return const Center(child: CircularProgressIndicator());
@@ -96,10 +112,7 @@ class _ChatMessagesListState extends State<ChatMessagesList> {
                           padding: const EdgeInsets.only(bottom: 4.0),
                           child: Text(
                             message.senderName,
-                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey[600],
-                            ),
+                            style: Theme.of(context).textTheme.titleSmall,
                           ),
                         ),
                       ChatMessageBubble(message: message),
@@ -108,12 +121,11 @@ class _ChatMessagesListState extends State<ChatMessagesList> {
                 );
               },
             );
-
           }
 
           return const SizedBox.shrink();
         },
-      ),
+      )
     );
   }
 
@@ -139,13 +151,12 @@ class ChatMessageBubble extends StatelessWidget {
         margin: EdgeInsets.symmetric(vertical: deviceHeight * 0.005, horizontal: deviceWidth * 0.01),
         padding: EdgeInsets.all(deviceWidth * 0.02),
         decoration: BoxDecoration(
-          color: message.isCurrentUser ? AppColors.primary : Theme.of(context).textTheme.bodySmall!.color,
+          color: message.isCurrentUser ? AppColors.primary : Theme.of(context).focusColor,
           borderRadius: BorderRadius.circular(deviceWidth * 0.01),
         ),
         child: message.content != null
             ? Text(
           message.content ?? "Attachment",
-          style: TextStyle(color: message.isCurrentUser ? Theme.of(context).textTheme.titleMedium!.color : Theme.of(context).scaffoldBackgroundColor),
         )
             : message.fileUrl != null
             ? SizedBox(height: deviceHeight * 0.2, child: Image.network(message.fileUrl!))

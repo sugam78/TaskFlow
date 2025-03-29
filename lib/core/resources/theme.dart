@@ -9,6 +9,7 @@ ThemeData lightTheme = ThemeData(
   appBarTheme: const AppBarTheme(
     backgroundColor: AppColors.appbarLight,
   ),
+  focusColor: AppColors.messageLight,
   textTheme: const TextTheme(
     bodyLarge: TextStyle(color: AppColors.lightPrimaryText, fontSize: 18),
     bodyMedium: TextStyle(color: AppColors.lightPrimaryText, fontSize: 16),
@@ -45,6 +46,7 @@ ThemeData darkTheme = ThemeData(
     backgroundColor: AppColors.appbarDark,
     foregroundColor: AppColors.darkPrimaryText,
   ),
+  focusColor: AppColors.messageDark,
   textTheme: const TextTheme(
     bodyLarge: TextStyle(color: AppColors.darkPrimaryText, fontSize: 18),
     bodyMedium: TextStyle(color: AppColors.darkPrimaryText, fontSize: 16),
