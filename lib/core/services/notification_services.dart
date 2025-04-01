@@ -1,89 +1,141 @@
 import 'dart:io';
-import 'dart:math';
-
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:go_router/go_router.dart';
+import 'package:hive_flutter/adapters.dart';
+import 'package:taskflow/core/routes/routes.dart';
 
 class NotificationServices {
-  FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
-  final FlutterLocalNotificationsPlugin _localNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  final FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
+  final FlutterLocalNotificationsPlugin _localNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
 
-  void requestNotificationPermission() async {
-    NotificationSettings settings = await firebaseMessaging.requestPermission(
+  Future<void> requestNotificationPermission() async {
+    //NotificationSettings settings =
+    await firebaseMessaging.requestPermission(
       alert: true,
       sound: true,
       badge: true,
-      provisional: true,
-      announcement: true,
-      criticalAlert: true,
-      carPlay: true,
     );
   }
 
-  void firebaseInit(){
+  void firebaseInit() {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      if(Platform.isAndroid) {
-        initLocalNotifications();
+      if (Platform.isAndroid) {
+        initLocalNotifications(message);
         _showNotification(message);
       }
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      _handleNotificationNavigation(message.data);
     });
+
+    _setupBackgroundNotificationListener();
   }
 
-  void initLocalNotifications()async{
-    const AndroidInitializationSettings androidSettings =
-    AndroidInitializationSettings('@mipmap/ic_launcher');
-    const InitializationSettings initializationSettings = InitializationSettings(
-      android: androidSettings,
-    );
-    await _localNotificationsPlugin.initialize(
-        initializationSettings,
-        onDidReceiveNotificationResponse: (payload){
-        }
-    );
-  }
-
-  Future<void> _showNotification(RemoteMessage message) async {
-    final RemoteNotification? notification = message.notification;
-    final AndroidNotification? android = notification?.android;
-    AndroidNotificationChannel channel = AndroidNotificationChannel(
-        Random.secure().nextInt(100000).toString(),
-        'High Importance Notifications',
-        importance: Importance.max
-    );
-
-    if (notification != null && android != null) {
-      AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
-        channel.id,
-        channel.name,
-        importance: channel.importance,
-        priority: Priority.high,
-        showWhen: true,
-      );
-      final darwinNotificationDetails = DarwinNotificationDetails(
-        presentAlert: true,
-        presentBadge: true,
-        presentSound: true,
-      );
-
-      NotificationDetails platformDetails = NotificationDetails(
-          android: androidDetails,
-          iOS: darwinNotificationDetails
-      );
-
-      await _localNotificationsPlugin.show(
-        notification.hashCode,
-        notification.title,
-        notification.body,
-        platformDetails,
-      );
+  void _setupBackgroundNotificationListener() async {
+    RemoteMessage? initialMessage = await firebaseMessaging.getInitialMessage();
+    if (initialMessage != null) {
+      _handleNotificationNavigation(initialMessage.data);
     }
   }
 
-  Future<String> getToken() async {
-    final token = await firebaseMessaging.getToken();
-    return token!;
+  Future<void> initLocalNotifications(RemoteMessage message) async {
+    const AndroidInitializationSettings androidSettings =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+
+    const InitializationSettings initializationSettings =
+        InitializationSettings(android: androidSettings);
+
+    await _localNotificationsPlugin.initialize(
+      initializationSettings,
+      onDidReceiveNotificationResponse: (NotificationResponse response) {
+        _handleNotificationNavigation(message.data);
+      },
+    );
+
+    await createNotificationChannel();
+  }
+
+  Future<void> createNotificationChannel() async {
+    const AndroidNotificationChannel channel = AndroidNotificationChannel(
+      'high_importance_channel',
+      'High Importance Notifications',
+      description: 'Channel for important notifications',
+      importance: Importance.max,
+    );
+
+    final androidPlugin =
+        _localNotificationsPlugin
+            .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin
+            >();
+
+    if (androidPlugin != null) {
+      await androidPlugin.createNotificationChannel(channel);
+    }
+  }
+
+  Future<void> _showNotification(RemoteMessage message) async {
+    try {
+      final RemoteNotification? notification = message.notification;
+      final AndroidNotification? android = notification?.android;
+
+      if (notification != null && android != null) {
+        const String channelId = 'high_importance_channel';
+
+        AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+          channelId,
+          'High Importance Notifications',
+          channelDescription: 'Used for important notifications',
+          importance: Importance.max,
+          priority: Priority.high,
+          showWhen: true,
+        );
+
+        NotificationDetails platformDetails = NotificationDetails(
+          android: androidDetails,
+        );
+
+        await _localNotificationsPlugin.show(
+          notification.hashCode,
+          notification.title ?? 'No Title',
+          notification.body ?? 'No Body',
+          platformDetails,
+        );
+
+        debugPrint("Notification displayed successfully.");
+      } else {
+        debugPrint("Notification or Android details are null.");
+      }
+    } catch (e, stackTrace) {
+      debugPrint("Error in _showNotification: $e\n$stackTrace");
+    }
+  }
+
+  void _handleNotificationNavigation(Map<String, dynamic> data) async {
+    String? token = await Hive.box('SETTINGS').get('token');
+
+    if (token != null && rootNavigatorKey.currentContext != null) {
+      String? screen = data['screen'];
+      String? extra = data['extra'];
+
+      debugPrint("Received screen: $screen, groupId: $extra");
+
+      if (screen != null) {
+        rootNavigatorKey.currentContext!.pushNamed(screen, extra: extra);
+      }
+    }
+  }
+
+  Future<String?> getToken() async {
+    try {
+      final token = await firebaseMessaging.getToken();
+      return token;
+    } catch (e) {
+      return null;
+    }
   }
 }

@@ -8,6 +8,7 @@ import 'package:taskflow/core/common/cubit/theme_cubit/theme_cubit.dart';
 import 'package:taskflow/core/resources/dimensions.dart';
 import 'package:taskflow/core/resources/theme.dart';
 import 'package:taskflow/core/routes/routes.dart';
+import 'package:taskflow/core/services/notification_services.dart';
 import 'package:taskflow/core/services/service_locator.dart';
 import 'package:taskflow/features/auth/domain/use_cases/login.dart';
 import 'package:taskflow/features/auth/domain/use_cases/signup.dart';
@@ -37,7 +38,6 @@ import 'package:taskflow/firebase_options.dart';
 import 'package:taskflow/shared/domain/use_cases/create_task_use_case.dart';
 import 'package:taskflow/shared/domain/use_cases/update_task_use_case.dart';
 import 'package:taskflow/shared/presentation/manager/chat_task_bloc/chat_task_bloc.dart';
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -66,6 +66,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    NotificationServices().firebaseInit();
     deviceHeight = MediaQuery.of(context).size.height;
     deviceWidth = MediaQuery.of(context).size.width;
     return MultiBlocProvider(
@@ -110,6 +111,7 @@ class MyApp extends StatelessWidget {
             darkTheme: darkTheme,
             themeMode: state,
             routerConfig: route,
+
           );
         },
       ),

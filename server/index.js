@@ -9,6 +9,13 @@ const fileUploadRoutes = require("./routes/file_upload.js");
 const http = require("http");
 const socketHandler = require("./socket/socket.js");
 
+const admin = require("firebase-admin");
+const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+})
+
 const app = express();
 const server = http.createServer(app);
 

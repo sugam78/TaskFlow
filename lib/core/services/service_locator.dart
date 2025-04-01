@@ -87,13 +87,13 @@ void setupServiceLocator(){
           () => NotificationServices());
   //Auth
   authLocator.registerLazySingleton<AuthRemoteDataSource>(
-          () => AuthRemoteDataSourceImpl(packagesLocator<http.Client>()));
+          () => AuthRemoteDataSourceImpl(packagesLocator<http.Client>(),sharedLocator<NotificationServices>()));
 
   authLocator.registerLazySingleton<AuthRepository>(
           () => AuthRepositoryImpl(authLocator<AuthRemoteDataSource>()));
 
   authLocator.registerLazySingleton(() => LoginUseCase(authLocator<AuthRepository>()));
-  authLocator.registerLazySingleton(() => SignupUseCase(authLocator<AuthRepository>(),sharedLocator<NotificationServices>()));
+  authLocator.registerLazySingleton(() => SignupUseCase(authLocator<AuthRepository>()));
 
   authLocator.registerLazySingleton<ChangePasswordRemoteDataSource>(
           () => ChangePasswordRemoteDataSourceImpl(packagesLocator<http.Client>()));

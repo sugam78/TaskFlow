@@ -11,8 +11,8 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<void> signUp(
-      String name, String email, String password,String fcmToken) async {
-    await remoteDataSource.signUp(name, email, password,fcmToken);
+      String name, String email, String password) async {
+    await remoteDataSource.signUp(name, email, password);
   }
 
   @override

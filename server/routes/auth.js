@@ -8,12 +8,12 @@ const auth = require("../middlewares/auth");
 //  Sign up route
 authRouter.post("/api/signup", async (req, res) => {
     try {
-        const { name, email, password } = req.body;
+        const { name, email, password,fcmToken } = req.body;
 
         // Check if a user with the same email already exists
         const existingUser = await User.findOne({ email });
         if (existingUser) {
-            return res.status(400).json({ error: "User with the same email already exists" });
+            return res.status(400).json({ message: "User with the same email already exists" });
         }
 
         // Hash the password
@@ -24,6 +24,7 @@ authRouter.post("/api/signup", async (req, res) => {
             name,
             email,
             password: hashedPassword,
+            fcmToken
         });
 
         user = await user.save();
@@ -32,14 +33,14 @@ authRouter.post("/api/signup", async (req, res) => {
             msg: "User created successfully",
         });
     } catch (e) {
-        res.status(500).json({ error: e.message });
+        res.status(500).json({ message: e.message });
     }
 });
 
 //  Login route
 authRouter.post("/api/login", async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { email, password,fcmToken } = req.body;
         const user = await User.findOne({ email });
         if (!user) {
             return res.status(400).json({ msg: "User with this email does not exist" });
@@ -47,9 +48,12 @@ authRouter.post("/api/login", async (req, res) => {
 
         const isMatch = await bcryptjs.compare(password, user.password);
         if (!isMatch) {
-            return res.status(400).json({ error: "Wrong password" });
+            return res.status(400).json({ message: "Wrong password" });
         }
-
+        if (fcmToken) {
+                    user.fcmToken = fcmToken;
+                    await user.save();
+                }
         const token = jwt.sign({ id: user._id }, "passwordKey");
         const responseUser = {
             _id: user._id,
@@ -59,7 +63,7 @@ authRouter.post("/api/login", async (req, res) => {
         };
         res.json(responseUser);
     } catch (e) {
-        res.status(500).json({ error: e.message });
+        res.status(500).json({ message: e.message });
     }
 });
 

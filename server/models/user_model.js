@@ -28,6 +28,10 @@ const userSchema = mongoose.Schema({
             message: 'Please enter a valid password',
         }
     },
+    fcmToken:{
+                     required: true,
+                     type: String,
+                 },
     groups: [{ type: mongoose.Schema.Types.ObjectId, ref: "ChatGroup" }],
 });
 

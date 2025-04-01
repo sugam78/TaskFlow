@@ -16,11 +16,9 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
 
-  final NotificationServices notificationServices = NotificationServices();
   @override
   void initState() {
     super.initState();
-    notificationServices.firebaseInit();
     Timer(Duration(seconds: 3), (){
        navigate();
     });
