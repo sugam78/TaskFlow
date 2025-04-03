@@ -13,19 +13,26 @@ import 'package:taskflow/core/services/service_locator.dart';
 import 'package:taskflow/features/auth/domain/use_cases/login.dart';
 import 'package:taskflow/features/auth/domain/use_cases/signup.dart';
 import 'package:taskflow/features/auth/presentation/manager/auth_bloc.dart';
+import 'package:taskflow/features/chat/domain/use_cases/chat/add_member_use_case.dart';
 import 'package:taskflow/features/chat/domain/use_cases/chat/create_group_use_case.dart';
 import 'package:taskflow/features/chat/domain/use_cases/chat/fetch_messages_use_case.dart';
 import 'package:taskflow/features/chat/domain/use_cases/chat/get_chat_group_use_case.dart';
 import 'package:taskflow/features/chat/domain/use_cases/chat/get_my_groups_use_case.dart';
+import 'package:taskflow/features/chat/domain/use_cases/chat/leave_group_use_case.dart';
 import 'package:taskflow/features/chat/domain/use_cases/chat/listen_to_message_use_case.dart';
+import 'package:taskflow/features/chat/domain/use_cases/chat/make_group_admin_use_case.dart';
+import 'package:taskflow/features/chat/domain/use_cases/chat/remove_member_use_case.dart';
 import 'package:taskflow/features/chat/domain/use_cases/chat/send_message_use_case.dart';
 import 'package:taskflow/features/chat/domain/use_cases/image/chat_image_picker_use_case.dart';
 import 'package:taskflow/features/chat/domain/use_cases/image/chat_upload_image_use_case.dart';
+import 'package:taskflow/features/chat/presentation/manager/group_actions_bloc/group_actions_bloc.dart';
+import 'package:taskflow/features/chat/presentation/manager/group_member_bloc/group_member_bloc.dart';
 import 'package:taskflow/features/chat/presentation/manager/chat_messages_bloc/chat_messages_bloc.dart';
 import 'package:taskflow/features/chat/presentation/manager/chat_pick_image_bloc/chat_pick_image_bloc.dart';
 import 'package:taskflow/features/chat/presentation/manager/chat_upload_image_bloc/chat_upload_image_bloc.dart';
 import 'package:taskflow/features/chat/presentation/manager/create_group_bloc/create_group_bloc.dart';
 import 'package:taskflow/features/chat/presentation/manager/group_details_bloc/group_details_bloc.dart';
+import 'package:taskflow/features/chat/presentation/manager/make_admin_bloc/make_admin_bloc.dart';
 import 'package:taskflow/features/chat/presentation/manager/my_groups_bloc/my_groups_bloc.dart';
 import 'package:taskflow/features/chat/presentation/manager/send_messages_bloc/send_message_bloc.dart';
 import 'package:taskflow/features/my_tasks/domain/use_cases/fetch_my_tasks_use_case.dart';
@@ -83,6 +90,12 @@ class MyApp extends StatelessWidget {
             create: (context) => CreateGroupBloc(chatLocator<CreateGroupUseCase>())),
         BlocProvider(
             create: (context) => GroupDetailsBloc(chatLocator<GetChatGroupUseCase>())),
+        BlocProvider(
+            create: (context) => GroupMemberBloc(chatLocator<AddMemberUseCase>(),chatLocator<RemoveMemberUseCase>())),
+        BlocProvider(
+            create: (context) => GroupActionsBloc(chatLocator<LeaveGroupUseCase>())),
+        BlocProvider(
+            create: (context) => MakeAdminBloc(chatLocator<MakeGroupAdminUseCase>())),
         BlocProvider(
             create: (context) => ChatMessagesBloc(messageLocator<FetchMessageUseCase>(),messageLocator<ListenToMessageUseCase>())),
         BlocProvider(

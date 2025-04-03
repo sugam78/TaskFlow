@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:taskflow/core/common/widgets/bottom_nav_bar.dart';
+import 'package:taskflow/features/chat/presentation/pages/chat_members.dart';
 import 'package:taskflow/features/profile/presentation/pages/my_profile.dart';
 import 'package:taskflow/features/auth/presentation/pages/login_screen.dart';
 import 'package:taskflow/features/auth/presentation/pages/signup_screen.dart';
@@ -97,6 +98,14 @@ final route = GoRouter(
         builder: (context, state) {
           final groupId = state.extra as String;
           return ChatGroupDetails(groupId: groupId);
+        },
+      ),
+      GoRoute(
+        path: '/chatMembers',
+        name: 'chatMembers',
+        builder: (context, state) {
+          final groupId = state.extra as String;
+          return ChatMembers(groupId: groupId);
         },
       ),
 

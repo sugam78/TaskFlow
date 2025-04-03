@@ -14,9 +14,22 @@ import 'package:taskflow/features/auth/domain/use_cases/login.dart';
 import 'package:taskflow/features/auth/domain/use_cases/signup.dart';
 import 'package:http/http.dart' as http;
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:taskflow/features/chat/data/data_sources/remote/chat_member_remote_data_source.dart';
 import 'package:taskflow/features/chat/data/data_sources/remote/chat_group_remote_data_source.dart';
 import 'package:taskflow/features/chat/data/data_sources/remote/chat_image_picker_data_source.dart';
+import 'package:taskflow/features/chat/data/data_sources/remote/chat_make_admin_remote_data_source.dart';
 import 'package:taskflow/features/chat/data/data_sources/remote/chat_messages_remote_data_source.dart';
+import 'package:taskflow/features/chat/data/data_sources/remote/group_actions_remote_data_source.dart';
+import 'package:taskflow/features/chat/data/repositories/chat_member_repository_impl.dart';
+import 'package:taskflow/features/chat/data/repositories/chat_make_admin_repository_impl.dart';
+import 'package:taskflow/features/chat/data/repositories/group_actions_repository_impl.dart';
+import 'package:taskflow/features/chat/domain/repositories/chat_member_repo.dart';
+import 'package:taskflow/features/chat/domain/repositories/chat_make_admin_repo.dart';
+import 'package:taskflow/features/chat/domain/repositories/group_actions_repo.dart';
+import 'package:taskflow/features/chat/domain/use_cases/chat/add_member_use_case.dart';
+import 'package:taskflow/features/chat/domain/use_cases/chat/leave_group_use_case.dart';
+import 'package:taskflow/features/chat/domain/use_cases/chat/make_group_admin_use_case.dart';
+import 'package:taskflow/features/chat/domain/use_cases/chat/remove_member_use_case.dart';
 import 'package:taskflow/features/my_tasks/data/data_sources/my_tasks_remote_data_source.dart';
 import 'package:taskflow/features/my_tasks/data/repositories/my_tasks_repository_impl.dart';
 import 'package:taskflow/features/my_tasks/domain/repositories/my_tasks_repo.dart';
@@ -75,7 +88,6 @@ void setupServiceLocator(){
   packagesLocator.registerLazySingleton<IO.Socket>(() {
     final token = Hive.box('SETTINGS').get('token');
 
-    // Ensure that the token is included in the handshake
     return IO.io(ApiConstants.webSocket, IO.OptionBuilder()
         .setTransports(['websocket'])  // WebSocket transport
         .setExtraHeaders({'Authorization': 'Bearer $token'})  // Optional for HTTP headers
@@ -128,6 +140,20 @@ void setupServiceLocator(){
   chatLocator.registerLazySingleton(()=> GetMyGroupsUseCase(chatLocator<ChatGroupRepository>()));
   chatLocator.registerLazySingleton(()=> GetChatGroupUseCase(chatLocator<ChatGroupRepository>()));
   chatLocator.registerLazySingleton(()=> CreateGroupUseCase(chatLocator<ChatGroupRepository>()));
+
+  //members
+  chatLocator.registerLazySingleton<ChatMemberRemoteDataSource>(()=> ChatMemberRemoteDataSourceImpl(packagesLocator<http.Client>()));
+  chatLocator.registerLazySingleton<ChatMemberRepository>(()=> ChatMemberRepositoryImpl(chatLocator<ChatMemberRemoteDataSource>()));
+  chatLocator.registerLazySingleton(()=> AddMemberUseCase(chatLocator<ChatMemberRepository>()));
+  chatLocator.registerLazySingleton(()=> RemoveMemberUseCase(chatLocator<ChatMemberRepository>()));
+
+  chatLocator.registerLazySingleton<ChatMakeAdminRemoteDataSource>(()=> ChatMakeAdminRemoteDataSourceImpl(packagesLocator<http.Client>()));
+  chatLocator.registerLazySingleton<ChatMakeAdminRepository>(()=> ChatMakeAdminRepositoryImpl(chatLocator<ChatMakeAdminRemoteDataSource>()));
+  chatLocator.registerLazySingleton(()=> MakeGroupAdminUseCase(chatLocator<ChatMakeAdminRepository>()));
+
+  chatLocator.registerLazySingleton<GroupActionsRemoteDataSource>(()=> GroupActionsRemoteDataSourceImpl(packagesLocator<http.Client>()));
+  chatLocator.registerLazySingleton<GroupActionsRepository>(()=> GroupActionsRepositoryImpl(chatLocator<GroupActionsRemoteDataSource>()));
+  chatLocator.registerLazySingleton(()=> LeaveGroupUseCase(chatLocator<GroupActionsRepository>()));
 
   //image
   imageLocator.registerLazySingleton<ChatUploadImageDataSource>(()=>ChatUploadImageDataSourceImpl(packagesLocator<http.Client>()));

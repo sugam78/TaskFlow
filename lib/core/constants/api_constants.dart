@@ -16,5 +16,9 @@ class ApiConstants{
   static final String uploadImage = '$baseUrl/file/upload';
   static final String myProfile = '$baseUrl/myProfile';
   static final String changePassword = '$baseUrl/changePassword';
+  static final String addMember = '$baseUrl/addMember';
+  static final String removeMember = '$baseUrl/removeMember';
+  static final String leaveGroup = '$baseUrl/leaveGroup';
+  static final String makeAdmin = '$baseUrl/makeAdmin';
 
 }

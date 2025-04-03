@@ -9,15 +9,15 @@ part 'chat_messages_event.dart';
 part 'chat_messages_state.dart';
 
 class ChatMessagesBloc extends Bloc<ChatMessagesEvent, ChatMessagesState> {
-  final FetchMessageUseCase fetchMessageUseCase;
-  final ListenToMessageUseCase listenToMessageUseCase;
+  final FetchMessageUseCase _fetchMessageUseCase;
+  final ListenToMessageUseCase _listenToMessageUseCase;
 
   int _currentPage = 1;
   final int _limit = 20;
 
   StreamSubscription<Message>? _messageSubscription;
 
-  ChatMessagesBloc(this.fetchMessageUseCase, this.listenToMessageUseCase) : super(ChatMessagesInitial()) {
+  ChatMessagesBloc(this._fetchMessageUseCase, this._listenToMessageUseCase) : super(ChatMessagesInitial()) {
     on<GetMessages>(_fetchMessage);
     on<ResetChatMessages>(_resetMessages);
     on<StartListeningToMessages>(_startListeningToMessages);
@@ -43,7 +43,7 @@ class ChatMessagesBloc extends Bloc<ChatMessagesEvent, ChatMessagesState> {
       emit(ChatMessagesFetching());
 
       try {
-        final newMessages = await fetchMessageUseCase.fetchMessages(event.groupId, _currentPage, _limit);
+        final newMessages = await _fetchMessageUseCase.fetchMessages(event.groupId, _currentPage, _limit);
 
         if (newMessages.messages.isEmpty) {
           emit(ChatMessagesFetched(Messages(messages: currentMessages)));
@@ -58,7 +58,7 @@ class ChatMessagesBloc extends Bloc<ChatMessagesEvent, ChatMessagesState> {
       emit(ChatMessagesFetching());
 
       try {
-        final messages = await fetchMessageUseCase.fetchMessages(event.groupId, 1, _limit);
+        final messages = await _fetchMessageUseCase.fetchMessages(event.groupId, 1, _limit);
         _currentPage = 2;
         emit(ChatMessagesFetched(Messages(messages: messages.messages)));
       } catch (e) {
@@ -80,7 +80,7 @@ class ChatMessagesBloc extends Bloc<ChatMessagesEvent, ChatMessagesState> {
     emit(ChatMessagesListening());
 
     try {
-      _messageSubscription = listenToMessageUseCase.listenToMessage().listen((message) {
+      _messageSubscription = _listenToMessageUseCase.listenToMessage().listen((message) {
         add(NewMessageReceived(message));
       });
     } catch (error) {
