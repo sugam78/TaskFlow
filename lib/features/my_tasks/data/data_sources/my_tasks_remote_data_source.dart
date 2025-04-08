@@ -1,5 +1,7 @@
 
 
+import 'dart:io';
+
 import 'package:taskflow/core/common/services/api_handler.dart';
 import 'package:taskflow/core/constants/api_constants.dart';
 import 'package:taskflow/features/my_tasks/data/models/my_tasks_model.dart';
@@ -17,8 +19,10 @@ class MyTasksRemoteDataSourceImpl extends MyTasksRemoteDataSource{
   Future<MyTasksModel> fetchMyTasks() async{
     try{
       final response = await apiHandler(ApiConstants.myTasks, client, 'GET');
-      print(response);
       return MyTasksModel.fromJson(response);
+    }
+    on SocketException{
+      throw SocketException('No Internet Connection');
     }
     catch(e){
       throw e.toString();

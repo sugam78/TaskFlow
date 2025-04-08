@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:taskflow/core/common/services/api_handler.dart';
@@ -29,6 +30,9 @@ class ChatGroupRemoteDataSourceImpl extends ChatGroupRemoteDataSource{
 
       return groups;
     }
+    on SocketException{
+      throw SocketException('No Internet');
+    }
     catch(e){
       throw 'Error: $e';
     }
@@ -46,6 +50,7 @@ class ChatGroupRemoteDataSourceImpl extends ChatGroupRemoteDataSource{
       }
       return false;
     }
+
     catch(e){
       throw Exception('Error: $e');
     }
@@ -57,6 +62,9 @@ class ChatGroupRemoteDataSourceImpl extends ChatGroupRemoteDataSource{
 
       final group = ChatGroupModel.fromJson(response);
       return group;
+    }
+    on SocketException{
+      throw SocketException('No Internet');
     }
     catch(e){
       throw Exception('Error: $e');

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:taskflow/core/common/services/api_handler.dart';
 import 'package:taskflow/core/constants/api_constants.dart';
 import 'package:taskflow/features/profile/data/models/profile_model.dart';
@@ -16,6 +18,9 @@ class MyProfileRemoteDataSourceImpl extends MyProfileRemoteDataSource{
    try{
      final response = await apiHandler(ApiConstants.myProfile, client, 'GET');
      return ProfileModel.fromJson(response);
+   }
+   on SocketException{
+     throw SocketException('No Internet Connection');
    }
    catch(e){
      throw e.toString();

@@ -1,4 +1,6 @@
 
+import 'dart:io';
+
 import 'package:taskflow/core/common/services/api_handler.dart';
 import 'package:taskflow/core/constants/api_constants.dart';
 import 'package:taskflow/features/chat/data/models/messages_model.dart';
@@ -18,6 +20,9 @@ class ChatMessagesRemoteDataSourceImpl extends ChatMessagesRemoteDataSource{
       final response = await apiHandler('${ApiConstants.fetchMessage}/$groupId?page=$page&limit=$limit', client, 'GET');
       final messages = MessagesList.fromJson(response);
       return messages;
+    }
+    on SocketException{
+      throw SocketException('No Internet');
     }
     catch(e){
       throw e.toString();

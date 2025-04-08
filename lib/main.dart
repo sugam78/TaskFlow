@@ -9,6 +9,7 @@ import 'package:taskflow/core/resources/dimensions.dart';
 import 'package:taskflow/core/resources/theme.dart';
 import 'package:taskflow/core/routes/routes.dart';
 import 'package:taskflow/core/services/notification_services.dart';
+import 'package:taskflow/core/services/register_adapters.dart';
 import 'package:taskflow/core/services/service_locator.dart';
 import 'package:taskflow/features/auth/domain/use_cases/login.dart';
 import 'package:taskflow/features/auth/domain/use_cases/signup.dart';
@@ -53,6 +54,7 @@ void main() async {
   );
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   await Hive.initFlutter();
+  await registerAdapters();
   await  Hive.openBox('SETTINGS');
   await  Hive.openBox('Biometrics');
   final settingsBox = await Hive.openBox('SettingBox');

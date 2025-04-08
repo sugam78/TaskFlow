@@ -1,12 +1,34 @@
+import 'package:hive/hive.dart';
+
+part 'task_model.g.dart';
+
+@HiveType(typeId: 6)
 class TaskModel {
+  @HiveField(0)
   final String id;
+
+  @HiveField(1)
   final String title;
+
+  @HiveField(2)
   final String? description;
+
+  @HiveField(3)
   final String assignedTo;
+
+  @HiveField(4)
   final String status;
+
+  @HiveField(5)
   final DateTime? dueDate;
+
+  @HiveField(6)
   final String createdBy;
+
+  @HiveField(7)
   final DateTime createdAt;
+
+  @HiveField(8)
   final DateTime updatedAt;
 
   TaskModel({
@@ -21,7 +43,6 @@ class TaskModel {
     required this.updatedAt,
   });
 
-  // Convert JSON to Task Object
   factory TaskModel.fromJson(Map<String, dynamic> json) {
     return TaskModel(
       id: json['_id'],
@@ -36,7 +57,6 @@ class TaskModel {
     );
   }
 
-  // Convert Task Object to JSON
   Map<String, dynamic> toJson() {
     return {
       "_id": id,

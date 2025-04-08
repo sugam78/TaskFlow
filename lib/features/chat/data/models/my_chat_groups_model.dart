@@ -1,4 +1,10 @@
+import 'package:hive/hive.dart';
+
+part 'my_chat_groups_model.g.dart';
+
+@HiveType(typeId: 0)
 class MyChatGroupsModel {
+  @HiveField(0)
   final List<ChatGroupItem> groups;
 
   const MyChatGroupsModel({required this.groups});
@@ -14,8 +20,12 @@ class MyChatGroupsModel {
   }
 }
 
+@HiveType(typeId: 1)
 class ChatGroupItem {
+  @HiveField(0)
   final String id;
+
+  @HiveField(1)
   final String name;
 
   const ChatGroupItem({required this.id, required this.name});

@@ -1,6 +1,11 @@
+import 'package:hive/hive.dart';
 import 'package:taskflow/shared/data/models/task_model.dart';
 
+part 'my_tasks_model.g.dart';
+
+@HiveType(typeId: 8)
 class MyTasksModel {
+  @HiveField(0)
   final List<TaskModel> tasks;
 
   MyTasksModel({required this.tasks});

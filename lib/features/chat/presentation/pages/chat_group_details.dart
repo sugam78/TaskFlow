@@ -46,6 +46,7 @@ class _ChatGroupDetailsState extends State<ChatGroupDetails> {
       },
       child: BlocBuilder<GroupDetailsBloc, GroupDetailsState>(
         builder: (context, state) {
+          print('Hello');
           if (state is GroupDetailsInitial) {
             context.read<GroupDetailsBloc>().add(GetChatGroup(widget.groupId));
           }
@@ -53,8 +54,13 @@ class _ChatGroupDetailsState extends State<ChatGroupDetails> {
             return Center(child: CircularProgressIndicator());
           }
           if (state is GroupDetailsError) {
-            return Center(
-              child: Text(state.message),
+            return Scaffold(
+              appBar: AppBar(
+                title: Text('Error'),
+              ),
+              body: Center(
+                child: Text(state.message),
+              ),
             );
           }
           if (state is GroupDetailsLoaded) {
@@ -62,6 +68,16 @@ class _ChatGroupDetailsState extends State<ChatGroupDetails> {
               builder: (context, profileState) {
                 if (profileState is MyProfileInitial) {
                   context.read<MyProfileBloc>().add(GetMyProfile());
+                }
+                if(profileState is MyProfileError){
+                  return Scaffold(
+                    appBar: AppBar(
+                      title: Text('Error'),
+                    ),
+                    body: Center(
+                      child: Text(profileState.message),
+                    ),
+                  );
                 }
                 if (profileState is MyProfileLoaded) {
                   final String currentUserId = profileState.profile.id;
@@ -80,7 +96,6 @@ class _ChatGroupDetailsState extends State<ChatGroupDetails> {
                       }
                     },
                     child: Scaffold(
-
                       appBar: AppBar(
                         title: Text(state.chatGroup.name),
                         actions: [

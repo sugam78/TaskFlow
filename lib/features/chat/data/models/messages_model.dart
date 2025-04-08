@@ -1,11 +1,15 @@
-
-
+import 'package:hive/hive.dart';
 import 'package:taskflow/shared/data/models/task_model.dart';
 
+part 'messages_model.g.dart';
+
+
+@HiveType(typeId: 4)
 class MessagesList {
+  @HiveField(0)
   final List<MessageModel> messages;
 
-  MessagesList({required this.messages});
+  const MessagesList({required this.messages});
 
   factory MessagesList.fromJson(List<dynamic> jsonList) {
     return MessagesList(
@@ -18,20 +22,39 @@ class MessagesList {
   }
 }
 
-
+@HiveType(typeId: 5)
 class MessageModel {
+  @HiveField(0)
   final String id;
+
+  @HiveField(1)
   final String sender;
+
+  @HiveField(2)
   final String senderName;
+
+  @HiveField(3)
   final String group;
+
+  @HiveField(4)
   final String? content;
+
+  @HiveField(5)
   final TaskModel? task;
+
+  @HiveField(6)
   final String? fileUrl;
+
+  @HiveField(7)
   final String type;
+
+  @HiveField(8)
   final DateTime timestamp;
+
+  @HiveField(9)
   final bool isCurrentUser;
 
-  MessageModel({
+  const MessageModel({
     required this.id,
     required this.sender,
     required this.senderName,
@@ -44,7 +67,6 @@ class MessageModel {
     required this.isCurrentUser,
   });
 
-  // Convert JSON to Message Object
   factory MessageModel.fromJson(Map<String, dynamic> json) {
     return MessageModel(
       id: json['_id'],
@@ -52,15 +74,14 @@ class MessageModel {
       senderName: json['senderName'],
       group: json['group'],
       content: json['content'],
-      task: json['task'] != null ? TaskModel.fromJson(json['task']) : null, // Convert JSON to Task object
+      task: json['task'] != null ? TaskModel.fromJson(json['task']) : null,
       fileUrl: json['file'],
       type: json['type'],
       timestamp: DateTime.parse(json['timestamp']),
-      isCurrentUser: json['isCurrentUser']
+      isCurrentUser: json['isCurrentUser'],
     );
   }
 
-  // Convert Message Object to JSON
   Map<String, dynamic> toJson() {
     return {
       "_id": id,
@@ -76,3 +97,5 @@ class MessageModel {
     };
   }
 }
+
+
