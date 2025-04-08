@@ -1,5 +1,4 @@
-import 'package:http/http.dart' as http;
-import 'package:taskflow/core/common/services/api_handler.dart';
+import 'package:taskflow/core/common/services/api_services.dart';
 import 'package:taskflow/core/constants/api_constants.dart';
 
 abstract interface class ChatMemberRemoteDataSource{
@@ -8,13 +7,13 @@ abstract interface class ChatMemberRemoteDataSource{
 }
 
 class ChatMemberRemoteDataSourceImpl extends ChatMemberRemoteDataSource{
-  final http.Client client;
+  final ApiService apiService;
 
-  ChatMemberRemoteDataSourceImpl(this.client);
+  ChatMemberRemoteDataSourceImpl(this.apiService);
   @override
   Future<void> addMember(String groupId, String email) async{
     try{
-      await apiHandler(ApiConstants.addMember, client, 'POST',body: {
+      await apiService.request(ApiConstants.addMember, 'POST',body: {
         'userEmail': email,
         'groupId': groupId
       });
@@ -27,7 +26,7 @@ class ChatMemberRemoteDataSourceImpl extends ChatMemberRemoteDataSource{
   @override
   Future<void> removeMember(String groupId, String email) async{
     try{
-      await apiHandler(ApiConstants.removeMember, client, 'POST',body: {
+      await apiService.request(ApiConstants.removeMember, 'POST',body: {
         'userEmail': email,
         'groupId': groupId
       });

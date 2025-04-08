@@ -1,22 +1,22 @@
 import 'dart:io';
 
-import 'package:taskflow/core/common/services/api_handler.dart';
+import 'package:taskflow/core/common/services/api_services.dart';
 import 'package:taskflow/core/constants/api_constants.dart';
 import 'package:taskflow/features/profile/data/models/profile_model.dart';
-import 'package:http/http.dart' as http;
 
 abstract interface class MyProfileRemoteDataSource{
   Future<ProfileModel> getMyProfile();
 }
 
 class MyProfileRemoteDataSourceImpl extends MyProfileRemoteDataSource{
-  final http.Client client;
+  final ApiService _apiService;
 
-  MyProfileRemoteDataSourceImpl(this.client);
+  MyProfileRemoteDataSourceImpl(this._apiService);
   @override
   Future<ProfileModel> getMyProfile()async {
    try{
-     final response = await apiHandler(ApiConstants.myProfile, client, 'GET');
+     final response = await _apiService.request(ApiConstants.myProfile, 'GET');
+     print(response);
      return ProfileModel.fromJson(response);
    }
    on SocketException{

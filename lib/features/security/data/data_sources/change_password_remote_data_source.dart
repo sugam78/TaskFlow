@@ -1,7 +1,6 @@
 
-import 'package:taskflow/core/common/services/api_handler.dart';
+import 'package:taskflow/core/common/services/api_services.dart';
 import 'package:taskflow/core/constants/api_constants.dart';
-import 'package:http/http.dart' as http;
 
 
 abstract interface class ChangePasswordRemoteDataSource{
@@ -9,13 +8,13 @@ abstract interface class ChangePasswordRemoteDataSource{
 }
 
 class ChangePasswordRemoteDataSourceImpl extends ChangePasswordRemoteDataSource{
-  final http.Client client;
+  final ApiService _apiService;
 
-  ChangePasswordRemoteDataSourceImpl(this.client);
+  ChangePasswordRemoteDataSourceImpl(this._apiService);
   @override
   Future<void> changePassword(String currentPassword, String newPassword) async{
     try{
-      await apiHandler(ApiConstants.changePassword, client, 'POST',body: {
+      await _apiService.request(ApiConstants.changePassword, 'POST',body: {
         'currentPassword': currentPassword,
         'newPassword': newPassword
       });

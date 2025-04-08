@@ -1,10 +1,9 @@
 
-import 'package:taskflow/core/common/services/api_handler.dart';
+import 'package:taskflow/core/common/services/api_services.dart';
 import 'package:taskflow/core/services/notification_services.dart';
 
 import '../../../../core/constants/api_constants.dart';
 import '../models/user_model.dart';
-import 'package:http/http.dart' as http;
 
 abstract class AuthRemoteDataSource {
   Future<void> signUp(String name,String email, String password);
@@ -12,17 +11,17 @@ abstract class AuthRemoteDataSource {
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
-  final http.Client client;
+  final ApiService _apiService;
   final NotificationServices notificationServices;
 
-  AuthRemoteDataSourceImpl(this.client, this.notificationServices);
+  AuthRemoteDataSourceImpl(this._apiService, this.notificationServices);
 
 
   @override
   Future<void> signUp(String name,String email, String password) async {
     final fcmToken = await notificationServices.getToken();
     try {
-      await apiHandler(ApiConstants.signUp,client, 'POST',body: {
+      await _apiService.request(ApiConstants.signUp, 'POST',body: {
         'name':name,
         'email':email,
         'password':password,
@@ -38,7 +37,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<UserModel> login(String email, String password) async {
     try{
       final fcmToken = await notificationServices.getToken();
-      final response = await apiHandler(ApiConstants.login,client, 'POST',body: {
+      final response = await _apiService.request(ApiConstants.login, 'POST',body: {
         'email': email,
         'password': password,
         'fcmToken': fcmToken

@@ -4,6 +4,8 @@ import 'dart:async';
 import 'package:get_it/get_it.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:taskflow/core/common/services/api_services.dart';
+import 'package:taskflow/core/common/services/token_provider.dart';
 import 'package:taskflow/core/constants/api_constants.dart';
 import 'package:taskflow/core/services/notification_services.dart';
 import 'package:taskflow/core/services/web_socket_service.dart';
@@ -101,9 +103,14 @@ void setupServiceLocator(){
 
   sharedLocator.registerLazySingleton<NotificationServices>(
           () => NotificationServices());
+  sharedLocator.registerLazySingleton<TokenProvider>(() => HiveTokenProvider());
+  sharedLocator.registerLazySingleton(() => ApiService(
+    client: packagesLocator<http.Client>(),
+    tokenProvider: sharedLocator<TokenProvider>(),
+  ));
   //Auth
   authLocator.registerLazySingleton<AuthRemoteDataSource>(
-          () => AuthRemoteDataSourceImpl(packagesLocator<http.Client>(),sharedLocator<NotificationServices>()));
+          () => AuthRemoteDataSourceImpl(sharedLocator<ApiService>(),sharedLocator<NotificationServices>()));
 
   authLocator.registerLazySingleton<AuthRepository>(
           () => AuthRepositoryImpl(authLocator<AuthRemoteDataSource>()));
@@ -112,7 +119,7 @@ void setupServiceLocator(){
   authLocator.registerLazySingleton(() => SignupUseCase(authLocator<AuthRepository>()));
 
   authLocator.registerLazySingleton<ChangePasswordRemoteDataSource>(
-          () => ChangePasswordRemoteDataSourceImpl(packagesLocator<http.Client>()));
+          () => ChangePasswordRemoteDataSourceImpl(sharedLocator<ApiService>()));
 
   authLocator.registerLazySingleton<ChangePasswordRepository>(
           () => ChangePasswordRepositoryImpl(authLocator<ChangePasswordRemoteDataSource>()));
@@ -139,7 +146,7 @@ void setupServiceLocator(){
   );
 
   //chat
-  chatLocator.registerLazySingleton<ChatGroupRemoteDataSource>(()=> ChatGroupRemoteDataSourceImpl(packagesLocator<http.Client>()));
+  chatLocator.registerLazySingleton<ChatGroupRemoteDataSource>(()=> ChatGroupRemoteDataSourceImpl(sharedLocator<ApiService>()));
   chatLocator.registerLazySingleton<ChatGroupLocalDataSource>(()=> ChatGroupLocalDataSourceImpl());
   chatLocator.registerLazySingleton<ChatGroupRepository>(()=> ChatGroupRepositoryImpl(chatLocator<ChatGroupRemoteDataSource>(),chatLocator<ChatGroupLocalDataSource>()));
   chatLocator.registerLazySingleton(()=> GetMyGroupsUseCase(chatLocator<ChatGroupRepository>()));
@@ -147,21 +154,21 @@ void setupServiceLocator(){
   chatLocator.registerLazySingleton(()=> CreateGroupUseCase(chatLocator<ChatGroupRepository>()));
 
   //members
-  chatLocator.registerLazySingleton<ChatMemberRemoteDataSource>(()=> ChatMemberRemoteDataSourceImpl(packagesLocator<http.Client>()));
+  chatLocator.registerLazySingleton<ChatMemberRemoteDataSource>(()=> ChatMemberRemoteDataSourceImpl(sharedLocator<ApiService>()));
   chatLocator.registerLazySingleton<ChatMemberRepository>(()=> ChatMemberRepositoryImpl(chatLocator<ChatMemberRemoteDataSource>()));
   chatLocator.registerLazySingleton(()=> AddMemberUseCase(chatLocator<ChatMemberRepository>()));
   chatLocator.registerLazySingleton(()=> RemoveMemberUseCase(chatLocator<ChatMemberRepository>()));
 
-  chatLocator.registerLazySingleton<ChatMakeAdminRemoteDataSource>(()=> ChatMakeAdminRemoteDataSourceImpl(packagesLocator<http.Client>()));
+  chatLocator.registerLazySingleton<ChatMakeAdminRemoteDataSource>(()=> ChatMakeAdminRemoteDataSourceImpl(sharedLocator<ApiService>()));
   chatLocator.registerLazySingleton<ChatMakeAdminRepository>(()=> ChatMakeAdminRepositoryImpl(chatLocator<ChatMakeAdminRemoteDataSource>()));
   chatLocator.registerLazySingleton(()=> MakeGroupAdminUseCase(chatLocator<ChatMakeAdminRepository>()));
 
-  chatLocator.registerLazySingleton<GroupActionsRemoteDataSource>(()=> GroupActionsRemoteDataSourceImpl(packagesLocator<http.Client>()));
+  chatLocator.registerLazySingleton<GroupActionsRemoteDataSource>(()=> GroupActionsRemoteDataSourceImpl(sharedLocator<ApiService>()));
   chatLocator.registerLazySingleton<GroupActionsRepository>(()=> GroupActionsRepositoryImpl(chatLocator<GroupActionsRemoteDataSource>()));
   chatLocator.registerLazySingleton(()=> LeaveGroupUseCase(chatLocator<GroupActionsRepository>()));
 
   //image
-  imageLocator.registerLazySingleton<ChatUploadImageDataSource>(()=>ChatUploadImageDataSourceImpl(packagesLocator<http.Client>()));
+  imageLocator.registerLazySingleton<ChatUploadImageDataSource>(()=>ChatUploadImageDataSourceImpl(sharedLocator<ApiService>()));
   imageLocator.registerLazySingleton<ChatUploadImageRepository>(()=>ChatUploadImageRepositoryImpl(imageLocator<ChatUploadImageDataSource>()));
   imageLocator.registerLazySingleton(()=>ChatUploadImageUseCase(imageLocator<ChatUploadImageRepository>()));
 
@@ -171,7 +178,7 @@ void setupServiceLocator(){
 
 
   //messages
-  messageLocator.registerLazySingleton<ChatMessagesRemoteDataSource>(()=>ChatMessagesRemoteDataSourceImpl(packagesLocator<http.Client>()));
+  messageLocator.registerLazySingleton<ChatMessagesRemoteDataSource>(()=>ChatMessagesRemoteDataSourceImpl(sharedLocator<ApiService>()));
   messageLocator.registerLazySingleton<ChatMessagesLocalDataSource>(()=>ChatMessagesLocalDataSourceImpl());
   messageLocator.registerLazySingleton<ChatMessagesRepository>(()=>ChatMessagesRepositoryImpl(messageLocator<ChatMessagesRemoteDataSource>(),webSocketLocator<ReceiveMessagesWebSocketDataSource>(),messageLocator<ChatMessagesLocalDataSource>()));
   messageLocator.registerLazySingleton(()=>FetchMessageUseCase(messageLocator<ChatMessagesRepository>()));
@@ -181,18 +188,18 @@ void setupServiceLocator(){
   messageLocator.registerLazySingleton(()=>SendMessageUseCase(messageLocator<SendMessagesRepository>()));
 
   //tasks
-  taskLocator.registerLazySingleton<ChatTaskRemoteDataSource>(()=>ChatTaskRemoteDataSourceImpl(packagesLocator<http.Client>()));
+  taskLocator.registerLazySingleton<ChatTaskRemoteDataSource>(()=>ChatTaskRemoteDataSourceImpl(sharedLocator<ApiService>()));
   taskLocator.registerLazySingleton<ChatTaskRepository>(()=>ChatTaskRepositoryImpl(taskLocator<ChatTaskRemoteDataSource>()));
   taskLocator.registerLazySingleton(()=>CreateTaskUseCase(taskLocator<ChatTaskRepository>()));
   taskLocator.registerLazySingleton(()=>UpdateTaskUseCase(taskLocator<ChatTaskRepository>()));
 
-  taskLocator.registerLazySingleton<MyTasksRemoteDataSource>(()=>MyTasksRemoteDataSourceImpl(packagesLocator<http.Client>()));
+  taskLocator.registerLazySingleton<MyTasksRemoteDataSource>(()=>MyTasksRemoteDataSourceImpl(sharedLocator<ApiService>()));
   taskLocator.registerLazySingleton<MyTasksLocalDataSource>(()=>MyTasksLocalDataSourceImpl());
   taskLocator.registerLazySingleton<MyTasksRepository>(()=>MyTasksRepositoryImpl(taskLocator<MyTasksRemoteDataSource>(),taskLocator<MyTasksLocalDataSource>()));
   taskLocator.registerLazySingleton(()=>FetchMyTasksUseCase(taskLocator<MyTasksRepository>()));
 
   //profile
-  profileLocator.registerLazySingleton<MyProfileRemoteDataSource>(()=>MyProfileRemoteDataSourceImpl(packagesLocator<http.Client>()));
+  profileLocator.registerLazySingleton<MyProfileRemoteDataSource>(()=>MyProfileRemoteDataSourceImpl(sharedLocator<ApiService>()));
   profileLocator.registerLazySingleton<MyProfileLocalDataSource>(()=>MyProfileLocalDataSourceImpl());
   profileLocator.registerLazySingleton<MyProfileRepository>(()=>MyProfileRepositoryImpl(profileLocator<MyProfileRemoteDataSource>(),profileLocator<MyProfileLocalDataSource>()));
   profileLocator.registerLazySingleton(()=>GetMyProfileUseCase(profileLocator<MyProfileRepository>()));
