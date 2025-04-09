@@ -20,16 +20,15 @@ class ApiService {
         Map<String, String>? headers,
         Map<String, dynamic>? body,
         File? file,
-        bool authorization = true,
       }) async {
     method = method.toUpperCase();
     http.Response? response;
 
     try {
-      final token = authorization ? await tokenProvider.getToken() : null;
+      final token = await tokenProvider.getToken() ;
 
       final finalHeaders = {
-        if (authorization && token != null) 'Authorization': 'Bearer $token',
+        if ( token != null) 'Authorization': 'Bearer $token',
         'Content-Type': 'application/json; charset=UTF-8',
         ...?headers,
       };
@@ -61,7 +60,6 @@ class ApiService {
           throw Exception(errorMessage);
         }
       }
-
       // Regular JSON requests
       if (method == 'GET') {
         response = await client.get(Uri.parse(url), headers: finalHeaders);
@@ -76,13 +74,12 @@ class ApiService {
       } else {
         throw Exception('Invalid HTTP method');
       }
-
       final jsonResponse = jsonDecode(response.body);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return jsonResponse;
       } else {
-        final errorMessage = jsonResponse["error"] ?? "An error occurred";
+        final errorMessage = jsonResponse["message"] ?? "An error occurred";
         throw Exception(errorMessage);
       }
     } on SocketException {
